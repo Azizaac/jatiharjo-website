@@ -4,9 +4,8 @@
  * Mengambil data dari Supabase PostgreSQL Database (Realtime DB).
  */
 header('Content-Type: application/json; charset=utf-8');
-// Izinkan Vercel CDN mencache data publik selama 60 detik untuk performa super cepat,
-// tapi tetap izinkan bypass jika URL mengandung query string unik (seperti di admin.js)
-header('Cache-Control: public, s-maxage=60, stale-while-revalidate=300');
+// Nonaktifkan cache agresif Vercel agar perubahan dari Admin langsung terlihat di frontend (Realtime)
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 $envPath = __DIR__ . '/.env';
 if (file_exists($envPath)) {
