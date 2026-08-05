@@ -54,7 +54,7 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
     <div class="container-custom admin-nav-container">
       <div style="display:flex; align-items:center; gap:0.85rem;">
         <div class="brand-icon brand-icon-logo" style="width:38px; height:38px;">
-          <img src="/assets/images/logo-karanganyar.png" alt="Logo Karanganyar" style="width:34px; height:34px; object-fit:contain; mix-blend-mode:multiply;" class="logo-karanganyar-img">
+          <img src="/assets/images/logo-karanganyar.webp" alt="Logo Karanganyar" style="width:34px; height:34px; object-fit:contain; mix-blend-mode:multiply;" class="logo-karanganyar-img">
         </div>
         <div>
           <strong style="font-size:1.1rem; display:block; line-height:1.1;">DESA JATIHARJO</strong>
@@ -312,7 +312,7 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
           <input type="file" id="product-image-file" name="image_file" class="form-input" accept="image/png, image/jpeg, image/webp" onchange="handleImagePreview(this)">
           
           <div class="image-preview-box">
-            <img id="preview-img" src="/assets/images/umkm.png" alt="Preview Gambar">
+            <img id="preview-img" src="/assets/images/umkm.webp" alt="Preview Gambar">
           </div>
         </div>
 

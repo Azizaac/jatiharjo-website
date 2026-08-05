@@ -111,7 +111,7 @@ function renderUmkmProducts(products) {
     return `
       <div class="umkm-card" data-category="${safeCategory}">
         <div class="umkm-img-wrapper">
-          <img src="${safeImgSrc}" alt="${safeTitle}" class="umkm-img" loading="lazy" onerror="this.src='assets/images/umkm.png'">
+          <img src="${safeImgSrc}" alt="${safeTitle}" class="umkm-img" loading="lazy" onerror="this.src='assets/images/umkm.webp'">
           <span class="umkm-category-badge">${safeCatLabel}</span>
         </div>
         <div class="umkm-body">
@@ -141,9 +141,9 @@ function renderUmkmProducts(products) {
 
 /* HELPER: Safe Image Source — blocks javascript: and data: URIs */
 function getSafeImageSrc(imagePath) {
-  if (!imagePath) return 'assets/images/umkm.png';
+  if (!imagePath) return 'assets/images/umkm.webp';
   // Allow only http/https URLs or relative paths
-  if (/^(javascript|data|vbscript):/i.test(imagePath)) return 'assets/images/umkm.png';
+  if (/^(javascript|data|vbscript):/i.test(imagePath)) return 'assets/images/umkm.webp';
   if (/^https?:\/\//i.test(imagePath)) return imagePath;
   // Relative path — return as is (browser will resolve)
   return imagePath;
@@ -432,7 +432,7 @@ function openProductModal(p) {
   img.src = safeImgSrc;
   img.alt = p.title || '';
   img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-  img.onerror = function() { this.src = 'assets/images/umkm.png'; };
+  img.onerror = function() { this.src = 'assets/images/umkm.webp'; };
 
   const catLabel = p.category === 'hasil-bumi' ? 'Hasil Bumi' : (p.category === 'makanan' ? 'Olahan Pangan' : 'Kerajinan');
   const catBadge = document.createElement('span');

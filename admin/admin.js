@@ -107,7 +107,7 @@ function renderProductsTable(products) {
       <tr>
         <td><strong>${idx + 1}</strong></td>
         <td>
-          <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(p.title)}" class="thumb-img" onerror="this.src='/assets/images/umkm.png'">
+          <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(p.title)}" class="thumb-img" onerror="this.src='/assets/images/umkm.webp'">
         </td>
         <td>
           <strong>${escapeHtml(p.title)}</strong>
@@ -160,7 +160,7 @@ function openAddProductModal() {
   document.getElementById('product-form').reset();
   document.getElementById('product-id').value = '';
   document.getElementById('image-url-input').value = '';
-  document.getElementById('preview-img').src = '/assets/images/umkm.png';
+  document.getElementById('preview-img').src = '/assets/images/umkm.webp';
   window.compressedImageBlob = null; // Reset compressed image
   document.getElementById('product-modal-backdrop').classList.add('active');
 }
@@ -395,7 +395,7 @@ function showAdminToast(msg, isError = false) {
 
 /* HELPER: Safe Image Source */
 function getSafeImageSrc(imagePath) {
-  if (!imagePath) return '/assets/images/umkm.png';
+  if (!imagePath) return '/assets/images/umkm.webp';
   // If it starts with http/https, use as-is (external URL)
   if (/^https?:\/\//i.test(imagePath)) return imagePath;
   // Relative path — prepend ../ for admin context

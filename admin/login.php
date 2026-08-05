@@ -128,7 +128,7 @@ header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-in
   <div class="login-card-container">
     <div class="login-card-header">
       <div class="brand-icon brand-icon-logo" style="margin: 0 auto 1rem auto; width: 56px; height: 56px;">
-        <img src="/assets/images/logo-karanganyar.png" alt="Logo Karanganyar" style="width:50px; height:50px; object-fit:contain; mix-blend-mode:multiply;" class="logo-karanganyar-img">
+        <img src="/assets/images/logo-karanganyar.webp" alt="Logo Karanganyar" style="width:50px; height:50px; object-fit:contain; mix-blend-mode:multiply;" class="logo-karanganyar-img">
       </div>
       <h2>Dashboard Panel Admin</h2>
       <p>Branding Digital &amp; Etalase Desa Jatiharjo</p>

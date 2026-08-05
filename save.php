@@ -191,7 +191,7 @@ try {
             }
             $payload['id'] = $nextId;
             if (!isset($payload['image_path'])) {
-                $payload['image_path'] = 'assets/images/umkm.png';
+                $payload['image_path'] = 'assets/images/umkm.webp';
             }
 
             $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/products';
