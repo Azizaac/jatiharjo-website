@@ -1,44 +1,63 @@
 <?php
 /**
- * DESA JATIHARJO - PUBLIC DATA API
- * Serves read-only data.json content for the frontend (public website).
- * data.json is blocked via .htaccess, this PHP endpoint provides safe access.
- *
- * SECURITY:
- * - Read-only (no write operations)
- * - Outputs only the expected data structure
- * - Security headers set
+ * DESA JATIHARJO - PUBLIC DATA API (SUPABASE STORAGE EDITION)
+ * Mengambil data dari Supabase Storage Bucket 'uploads' (data.json)
  */
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
-
-$dataFile = __DIR__ . '/data.json';
-
-if (!file_exists($dataFile)) {
-    echo json_encode(['products' => [], 'settings' => []]);
-    exit;
+// 1. Load Environment Variables (.env)
+$envPath = __DIR__ . '/.env';
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        list($name, $value) = explode('=', $line, 2);
+        putenv(trim($name) . '=' . trim($value, '"\''));
+    }
 }
 
-$content = file_get_contents($dataFile);
-$data    = json_decode($content, true);
+$supabaseUrl = getenv('SUPABASE_URL');
+$supabaseKey = getenv('SUPABASE_KEY');
 
+$localFile = __DIR__ . '/data.json';
+$content = null;
+
+// 2. Fetch dari Supabase Storage jika dikonfigurasi
+if ($supabaseUrl && $supabaseKey) {
+    // Bucket uploads bersifat public, jadi kita bisa akses public URL
+    $storageUrl = rtrim($supabaseUrl, '/') . '/storage/v1/object/public/uploads/data.json';
+    
+    // Gunakan cURL untuk menghindari masalah allow_url_fopen di Vercel
+    $ch = curl_init($storageUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200 && $response) {
+        $content = $response;
+    }
+}
+
+// 3. Fallback ke File Lokal jika Supabase gagal/belum di-upload
+if (!$content && file_exists($localFile)) {
+    $content = file_get_contents($localFile);
+}
+
+// 4. Parse & Sanitasi
+$data = json_decode($content, true);
 if (!is_array($data)) {
     echo json_encode(['products' => [], 'settings' => []]);
     exit;
 }
 
-// Only expose expected keys (no internal fields leak)
-$safe = [
-    'products' => [],
-    'settings' => []
-];
+$safe = ['products' => [], 'settings' => []];
 
-// Sanitize products for public output
 if (!empty($data['products']) && is_array($data['products'])) {
     foreach ($data['products'] as $p) {
-        // Strip HTML tags from text fields — textContent in JS handles XSS display
         $safe['products'][] = [
             'id'          => (int)($p['id'] ?? 0),
             'owner'       => strip_tags((string)($p['owner'] ?? '')),
@@ -52,7 +71,6 @@ if (!empty($data['products']) && is_array($data['products'])) {
     }
 }
 
-// Sanitize settings for public output
 $allowedSettingKeys = [
     'stat_sawah_val', 'stat_sawah_label',
     'stat_sapi_val', 'stat_sapi_label',
@@ -65,7 +83,6 @@ if (!empty($data['settings']) && is_array($data['settings'])) {
     foreach ($allowedSettingKeys as $key) {
         if (isset($data['settings'][$key])) {
             $val = $data['settings'][$key];
-            // WA numbers: digits only
             if (strpos($key, 'wa_') === 0) {
                 $val = preg_replace('/[^0-9]/', '', $val);
             } else {
