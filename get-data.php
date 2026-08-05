@@ -15,8 +15,8 @@ if (file_exists($envPath)) {
         putenv(trim($name) . '=' . trim($value, '"\''));
     }
 }
-$supabaseUrl = getenv('SUPABASE_URL');
-$supabaseKey = getenv('SUPABASE_KEY');
+$supabaseUrl = getenv('SUPABASE_URL') ?: $_ENV['SUPABASE_URL'] ?? $_SERVER['SUPABASE_URL'] ?? '';
+$supabaseKey = getenv('SUPABASE_KEY') ?: $_ENV['SUPABASE_KEY'] ?? $_SERVER['SUPABASE_KEY'] ?? '';
 
 if (!$supabaseUrl || !$supabaseKey) {
     echo json_encode(['products' => [], 'settings' => []]);
