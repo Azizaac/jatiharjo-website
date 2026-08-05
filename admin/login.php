@@ -36,14 +36,14 @@ define('ADMIN_PASSWORD_HASH', '$2y$12$cj7ywIcgjTgL5zUd2Eo5dOwHBmJQYtbf5NwYFUUDxq
 // --- RATE LIMITING (file-based, 5 percobaan / 15 menit) ---
 define('MAX_ATTEMPTS',    5);
 define('LOCKOUT_SECS',    900); // 15 menit
-$rateLimitFile = __DIR__ . '/../assets/rate_limit.json'; // di luar web root relatif
+$rateLimitFile = sys_get_temp_dir() . '/jatiharjo_rate_limit.json'; 
 
 function rl_getData($f) {
     if (!file_exists($f)) return [];
-    return json_decode(file_get_contents($f), true) ?: [];
+    return json_decode(@file_get_contents($f), true) ?: [];
 }
 function rl_save($f, $d) {
-    file_put_contents($f, json_encode($d), LOCK_EX);
+    @file_put_contents($f, json_encode($d), LOCK_EX);
 }
 function rl_isLocked($ip, $f) {
     $d = rl_getData($f);
