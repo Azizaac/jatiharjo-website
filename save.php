@@ -1,7 +1,7 @@
 <?php
 /**
  * DESA JATIHARJO - SUPABASE BACKEND HANDLER
- * Modified to support Vercel deployment by persisting data and images to Supabase Storage.
+ * Menggunakan Supabase PostgreSQL (PostgREST) untuk CRUD.
  */
 
 ini_set('session.cookie_httponly', 1);
@@ -56,69 +56,13 @@ if (file_exists($envPath)) {
 }
 $supabaseUrl = getenv('SUPABASE_URL');
 $supabaseKey = getenv('SUPABASE_KEY');
-$useSupabase = ($supabaseUrl && $supabaseKey);
 
-$dataFile = __DIR__ . '/data.json';
+if (!$supabaseUrl || !$supabaseKey) {
+    echo json_encode(['success' => false, 'error' => 'Supabase URL/Key belum dikonfigurasi.']);
+    exit;
+}
 
 // --- HELPERS ---
-function getJsonData($filePath, $useSupabase, $url, $key) {
-    if ($useSupabase) {
-        $storageUrl = rtrim($url, '/') . '/storage/v1/object/uploads/data.json';
-        $ch = curl_init($storageUrl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "apikey: $key",
-            "Authorization: Bearer $key"
-        ]);
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        if ($httpCode === 200 && $response) {
-            $parsed = json_decode($response, true);
-            if ($parsed) return $parsed;
-        }
-    }
-    // Fallback local
-    if (!file_exists($filePath)) return ['products' => [], 'settings' => []];
-    $content = file_get_contents($filePath);
-    return json_decode($content, true) ?: ['products' => [], 'settings' => []];
-}
-
-function saveJsonData($filePath, $data, $useSupabase, $url, $key) {
-    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    $success = true;
-    
-    // Save to Supabase if configured
-    if ($useSupabase) {
-        $endpoint = rtrim($url, '/') . '/storage/v1/object/uploads/data.json';
-        $ch = curl_init($endpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "apikey: $key",
-            "Authorization: Bearer $key",
-            "Content-Type: application/json",
-            "x-upsert: true"
-        ]);
-        curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        if ($httpCode !== 200 && $httpCode !== 201) {
-            $success = false;
-        }
-    }
-
-    // Save locally (Best effort - works in Laragon, will silently fail on Vercel)
-    $tmpFile = $filePath . '.tmp';
-    if (@file_put_contents($tmpFile, $json, LOCK_EX) !== false) {
-        @rename($tmpFile, $filePath);
-    }
-
-    return $success;
-}
-
 function sanitizeText($value, $maxLength = 500) {
     $value = strip_tags(trim((string)$value));
     return mb_substr($value, 0, $maxLength);
@@ -133,7 +77,6 @@ function sanitizeImageUrl($url) {
 }
 
 $action = $_POST['action'] ?? '';
-$data   = getJsonData($dataFile, $useSupabase, $supabaseUrl, $supabaseKey);
 
 try {
     if ($action === 'save_product') {
@@ -177,36 +120,27 @@ try {
             $newFileName = 'umkm_' . bin2hex(random_bytes(8)) . '.' . $ext;
             $fileContent = file_get_contents($_FILES['image_file']['tmp_name']);
 
-            if ($useSupabase) {
-                // Upload to Supabase Storage
-                $endpoint = rtrim($supabaseUrl, '/') . '/storage/v1/object/uploads/' . $newFileName;
-                $ch = curl_init($endpoint);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $fileContent);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    "apikey: $supabaseKey",
-                    "Authorization: Bearer $supabaseKey",
-                    "Content-Type: $detectedMime",
-                    "x-upsert: true"
-                ]);
-                curl_exec($ch);
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close($ch);
+            // Upload to Supabase Storage
+            $endpoint = rtrim($supabaseUrl, '/') . '/storage/v1/object/uploads/' . $newFileName;
+            $ch = curl_init($endpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fileContent);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey",
+                "Content-Type: $detectedMime",
+                "x-upsert: true"
+            ]);
+            curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
 
-                if ($httpCode === 200 || $httpCode === 201) {
-                    $image_path = rtrim($supabaseUrl, '/') . '/storage/v1/object/public/uploads/' . $newFileName;
-                } else {
-                    echo json_encode(['success' => false, 'error' => 'Gagal mengupload gambar ke Supabase.']);
-                    exit;
-                }
+            if ($httpCode === 200 || $httpCode === 201) {
+                $image_path = rtrim($supabaseUrl, '/') . '/storage/v1/object/public/uploads/' . $newFileName;
             } else {
-                // Local fallback
-                $uploadDir = __DIR__ . '/assets/images/uploads/';
-                if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
-                if (@move_uploaded_file($_FILES['image_file']['tmp_name'], $uploadDir . $newFileName)) {
-                    $image_path = 'assets/images/uploads/' . $newFileName;
-                }
+                echo json_encode(['success' => false, 'error' => 'Gagal mengupload gambar ke Supabase.']);
+                exit;
             }
         }
 
@@ -214,69 +148,91 @@ try {
             $image_path = $image_url_input;
         }
 
-        if ($id) {
-            $found = false;
-            foreach ($data['products'] as &$p) {
-                if ($p['id'] == $id) {
-                    $p['owner']       = $owner;
-                    $p['title']       = $title;
-                    $p['category']    = $category;
-                    $p['description'] = $description;
-                    $p['price']       = $price;
-                    $p['wa_number']   = $wa_number;
-                    if ($image_path) $p['image_path'] = $image_path;
-                    $found = true;
-                    break;
-                }
-            }
-            unset($p);
-            if (!$found) {
-                echo json_encode(['success' => false, 'error' => 'Produk tidak ditemukan.']);
-                exit;
-            }
-            $msg = 'Produk UMKM berhasil diperbarui.';
-        } else {
-            $newId = 1;
-            foreach ($data['products'] as $p) {
-                if ($p['id'] >= $newId) $newId = $p['id'] + 1;
-            }
-            $data['products'][] = [
-                'id'          => $newId,
-                'owner'       => $owner,
-                'title'       => $title,
-                'category'    => $category,
-                'description' => $description,
-                'price'       => $price,
-                'image_path'  => $image_path ?: 'assets/images/umkm.png',
-                'wa_number'   => $wa_number
-            ];
-            $msg = 'Produk UMKM baru berhasil ditambahkan.';
+        // Siapkan Payload Database
+        $payload = [
+            'owner'       => $owner,
+            'title'       => $title,
+            'category'    => $category,
+            'description' => $description,
+            'price'       => $price,
+            'wa_number'   => $wa_number
+        ];
+        if ($image_path) {
+            $payload['image_path'] = $image_path;
         }
 
-        if (!saveJsonData($dataFile, $data, $useSupabase, $supabaseUrl, $supabaseKey)) {
-            echo json_encode(['success' => false, 'error' => 'Gagal menyimpan data ke Cloud Storage.']);
+        if ($id) {
+            // UPDATE
+            $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/products?id=eq.' . $id;
+            $ch = curl_init($dbEndpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey",
+                "Content-Type: application/json",
+                "Prefer: return=minimal"
+            ]);
+            $res = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode >= 200 && $httpCode < 300) {
+                echo json_encode(['success' => true, 'message' => 'Produk UMKM berhasil diperbarui.']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Gagal mengupdate database Supabase (Kode: '.$httpCode.').']);
+            }
+            exit;
+        } else {
+            // INSERT
+            if (!$image_path) {
+                $payload['image_path'] = 'assets/images/umkm.png';
+            }
+            $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/products';
+            $ch = curl_init($dbEndpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey",
+                "Content-Type: application/json",
+                "Prefer: return=minimal"
+            ]);
+            $res = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode >= 200 && $httpCode < 300) {
+                echo json_encode(['success' => true, 'message' => 'Produk UMKM baru berhasil ditambahkan.']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Gagal menyimpan ke database Supabase (Kode: '.$httpCode.').']);
+            }
             exit;
         }
-
-        echo json_encode(['success' => true, 'message' => $msg]);
-        exit;
 
     } elseif ($action === 'delete_product') {
         $id = (int)($_POST['id'] ?? 0);
         if ($id > 0) {
-            $prevCount = count($data['products']);
-            $data['products'] = array_values(array_filter($data['products'], function($p) use ($id) {
-                return $p['id'] != $id;
-            }));
-            if (count($data['products']) === $prevCount) {
-                echo json_encode(['success' => false, 'error' => 'Produk tidak ditemukan.']);
-                exit;
+            $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/products?id=eq.' . $id;
+            $ch = curl_init($dbEndpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey",
+                "Content-Type: application/json"
+            ]);
+            $res = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode >= 200 && $httpCode < 300) {
+                echo json_encode(['success' => true, 'message' => 'Produk UMKM berhasil dihapus.']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Gagal menghapus produk dari database (Kode: '.$httpCode.').']);
             }
-            if (!saveJsonData($dataFile, $data, $useSupabase, $supabaseUrl, $supabaseKey)) {
-                echo json_encode(['success' => false, 'error' => 'Gagal menghapus data di Cloud Storage.']);
-                exit;
-            }
-            echo json_encode(['success' => true, 'message' => 'Produk UMKM berhasil dihapus.']);
             exit;
         }
         echo json_encode(['success' => false, 'error' => 'ID tidak valid.']);
@@ -287,32 +243,53 @@ try {
         $allowedTextKeys = ['stat_sawah_label', 'stat_sapi_label', 'stat_umkm_label', 'stat_poktan_label'];
         $allowedWaKeys = ['wa_kelompok_ternak', 'wa_kelompok_tani', 'wa_daftar_umkm'];
 
+        $payloads = [];
+
         foreach ($allowedNumericKeys as $k) {
             if (isset($_POST[$k])) {
                 $val = (int)$_POST[$k];
                 if ($val < 0) $val = 0;
-                $data['settings'][$k] = (string)$val;
+                $payloads[] = ['key' => $k, 'value' => (string)$val];
             }
         }
         foreach ($allowedTextKeys as $k) {
             if (isset($_POST[$k])) {
-                $data['settings'][$k] = sanitizeText($_POST[$k], 100);
+                $payloads[] = ['key' => $k, 'value' => sanitizeText($_POST[$k], 100)];
             }
         }
         foreach ($allowedWaKeys as $k) {
             if (isset($_POST[$k])) {
                 $val = preg_replace('/[^0-9]/', '', $_POST[$k]);
                 if (strlen($val) > 15) $val = substr($val, 0, 15);
-                $data['settings'][$k] = $val;
+                $payloads[] = ['key' => $k, 'value' => $val];
             }
         }
 
-        if (!saveJsonData($dataFile, $data, $useSupabase, $supabaseUrl, $supabaseKey)) {
-            echo json_encode(['success' => false, 'error' => 'Gagal menyimpan pengaturan ke Cloud Storage.']);
+        if (count($payloads) > 0) {
+            $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/settings';
+            $ch = curl_init($dbEndpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payloads));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey",
+                "Content-Type: application/json",
+                "Prefer: resolution=merge-duplicates"
+            ]);
+            $res = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode >= 200 && $httpCode < 300) {
+                echo json_encode(['success' => true, 'message' => 'Pengaturan data berhasil diperbarui.']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Gagal menyimpan pengaturan ke database (Kode: '.$httpCode.').']);
+            }
             exit;
         }
 
-        echo json_encode(['success' => true, 'message' => 'Pengaturan data berhasil diperbarui.']);
+        echo json_encode(['success' => true, 'message' => 'Tidak ada pengaturan yang diubah.']);
         exit;
 
     } else {
