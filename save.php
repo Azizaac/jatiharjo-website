@@ -171,10 +171,28 @@ try {
             }
             exit;
         } else {
-            // INSERT
-            if (!$image_path) {
+            // Mencegah error 409 Conflict akibat sequence Postgres tidak sinkron
+            // dengan mencari ID terbesar dan menambahkannya 1 secara manual.
+            $maxIdEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/products?select=id&order=id.desc&limit=1';
+            $chMax = curl_init($maxIdEndpoint);
+            curl_setopt($chMax, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($chMax, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey"
+            ]);
+            $maxRes = curl_exec($chMax);
+            curl_close($chMax);
+            
+            $nextId = 1;
+            $maxData = json_decode($maxRes, true);
+            if (is_array($maxData) && count($maxData) > 0 && isset($maxData[0]['id'])) {
+                $nextId = (int)$maxData[0]['id'] + 1;
+            }
+            $payload['id'] = $nextId;
+            if (!isset($payload['image_path'])) {
                 $payload['image_path'] = 'assets/images/umkm.png';
             }
+
             $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/products';
             $ch = curl_init($dbEndpoint);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
