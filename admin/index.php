@@ -43,6 +43,10 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   
+  <!-- SweetAlert2 CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+  
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/admin/admin-styles.css">

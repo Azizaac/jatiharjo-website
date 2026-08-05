@@ -195,9 +195,8 @@ function handleImagePreview(input) {
   if (input.files && input.files[0]) {
     const file = input.files[0];
     
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      alert('Tipe file tidak diizinkan. Hanya JPG, PNG, dan WEBP.');
+    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+      Swal.fire('Format Tidak Didukung', 'Hanya diperbolehkan format gambar JPG, PNG, dan WEBP.', 'warning');
       input.value = '';
       return;
     }
@@ -331,66 +330,64 @@ function initFormListeners() {
 }
 
 /* 5. DELETE PRODUCT */
-async function confirmDeleteProduct(id, title) {
+function confirmDeleteProduct(id, title) {
   const safeId = parseInt(id, 10);
-  if (!confirm(`Apakah Anda yakin ingin menghapus produk ini?`)) return;
+  
+  Swal.fire({
+    title: 'Hapus Produk?',
+    text: `Apakah Anda yakin ingin menghapus produk "${title}"? Tindakan ini tidak dapat dibatalkan!`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Ya, Hapus!',
+    cancelButtonText: 'Batal'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const formData = new FormData();
+      formData.append('action', 'delete_product');
+      formData.append('id', safeId);
+      formData.append('csrf_token', getCsrfToken());
 
-  const formData = new FormData();
-  formData.append('action', 'delete_product');
-  formData.append('id', safeId);
-  formData.append('csrf_token', getCsrfToken());
+      try {
+        const res = await fetch('/save.php', {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin'
+        });
+        const data = await res.json();
 
-  try {
-    const res = await fetch('/save.php', {
-      method: 'POST',
-      body: formData,
-      credentials: 'same-origin'
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      showAdminToast(data.message || 'Produk berhasil dihapus.');
-      loadAllData();
-    } else {
-      showAdminToast(data.error || 'Gagal menghapus produk.', true);
+        if (data.success) {
+          Swal.fire('Terhapus!', data.message || 'Produk berhasil dihapus.', 'success');
+          loadAllData();
+        } else {
+          Swal.fire('Gagal!', data.error || 'Gagal menghapus produk.', 'error');
+        }
+      } catch (err) {
+        Swal.fire('Error!', 'Gagal terhubung ke server save.php.', 'error');
+      }
     }
-  } catch (err) {
-    showAdminToast('Gagal terhubung ke server save.php.', true);
-  }
+  });
 }
 
 /* TOAST NOTIFICATION */
 function showAdminToast(msg, isError = false) {
-  let toast = document.getElementById('admin-toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'admin-toast';
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      z-index: 4000;
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      transform: translateY(100px);
-      color: #FFFFFF;
-      max-width: 360px;
-    `;
-    document.body.appendChild(toast);
-  }
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom-end',
+    showConfirmButton: false,
+    timer: 3500,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
 
-  toast.style.background = isError ? '#B71C1C' : '#1B5E20';
-  // Use textContent instead of innerText to avoid XSS
-  toast.textContent = msg;
-  toast.style.transform = 'translateY(0)';
-
-  setTimeout(() => {
-    toast.style.transform = 'translateY(100px)';
-  }, 3500);
+  Toast.fire({
+    icon: isError ? 'error' : 'success',
+    title: msg
+  });
 }
 
 /* HELPER: Safe Image Source */
