@@ -17,7 +17,7 @@ require_once __DIR__ . '/auth-check.php';
 if (!empty($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > 3600) {
     session_unset();
     session_destroy();
-    header('Location: login.php?timeout=1');
+    header('Location: /admin/login.php?timeout=1');
     exit;
 }
 

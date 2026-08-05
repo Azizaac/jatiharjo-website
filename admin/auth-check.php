@@ -19,7 +19,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Check authentication
 if (empty($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: login.php');
+    header('Location: /admin/login.php');
     exit;
 }
 
@@ -27,7 +27,7 @@ if (empty($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true
 if (!empty($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > 3600) {
     session_unset();
     session_destroy();
-    header('Location: login.php?timeout=1');
+    header('Location: /admin/login.php?timeout=1');
     exit;
 }
 
