@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desa Jatiharjo — Sentra Tani & Ternak Sehat Kaki Gunung Lawu</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Website Resmi Branding & Etalase Digital Desa Jatiharjo, Kecamatan Jatipuro, Kabupaten Karanganyar, Jawa Tengah. Menampilkan potensi pertanian padi, peternakan sapi, dan UMKM lokal unggulan.">
+  <meta name="keywords" content="Desa Jatiharjo, Jatipuro, Karanganyar, Padi, Beras Organik, Sapi Simmental, Peternakan Sapi, UMKM Karanganyar, Hasil Bumi Jawa Tengah">
+  <meta name="author" content="Tim Branding Desa Jatiharjo">
+  
+  <!-- Preload LCP Hero Image -->
+  <link rel="preload" as="image" href="assets/images/hero.png" fetchpriority="high">
+
+  <!-- Google Fonts - Montserrat (All Weights) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet" fetchpriority="high">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar" id="navbar">
+    <div class="container-custom navbar-container">
+      <a href="#home" class="brand-logo" aria-label="Beranda Desa Jatiharjo">
+        <div class="brand-icon brand-icon-logo">
+          <!-- Logo Kabupaten Karanganyar -->
+          <img src="assets/images/logo-karanganyar.png" alt="Logo Karanganyar" style="width:38px; height:38px; object-fit:contain; mix-blend-mode:multiply; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.15));" class="logo-karanganyar-img">
+        </div>
+        <div>
+          <span style="display:block; line-height:1.1;">DESA JATIHARJO</span>
+          <span style="font-size:0.7rem; font-weight:600; color:var(--primary-green); letter-spacing:0.08em; display:block;">JATIPURO • KARANGANYAR</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <ul class="nav-menu" role="navigation">
+        <li><a href="#home" class="nav-link active">Home</a></li>
+        <li><a href="#pertanian" class="nav-link">Pertanian</a></li>
+        <li><a href="#peternakan" class="nav-link">Peternakan</a></li>
+        <li><a href="#umkm" class="nav-link">UMKM</a></li>
+        <li><a href="#galeri" class="nav-link">Galeri</a></li>
+        <li><a href="#kontak" class="nav-link">Kontak</a></li>
+      </ul>
+
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <!-- Dark Mode Toggle Button -->
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Ganti Mode Gelap / Terang">
+          <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg id="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <!-- Mobile Hamburger Button -->
+        <button id="hamburger-btn" class="hamburger-btn" aria-label="Buka Menu Mobile">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu Dropdown -->
+  <div id="mobile-menu" class="mobile-menu">
+    <a href="#home" class="mobile-nav-link nav-link">Home</a>
+    <a href="#pertanian" class="mobile-nav-link nav-link">Pertanian Padi</a>
+    <a href="#peternakan" class="mobile-nav-link nav-link">Peternakan Sapi</a>
+    <a href="#umkm" class="mobile-nav-link nav-link">UMKM Lokal</a>
+    <a href="#galeri" class="mobile-nav-link nav-link">Galeri Desa</a>
+    <a href="#kontak" class="mobile-nav-link nav-link">Kontak & Lokasi</a>
+  </div>
+
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <section id="home" class="hero-section">
+    <div class="hero-bg-wrapper">
+      <!-- ganti dengan foto asli desa -->
+      <img src="assets/images/hero.png" alt="Hamparan Sawah Desa Jatiharjo Jatipuro Karanganyar" class="hero-bg-img" fetchpriority="high">
+    </div>
+    <div class="hero-overlay"></div>
+
+    <div class="container-custom hero-content">
+      <div class="hero-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Kecamatan Jatipuro • Kabupaten Karanganyar
+      </div>
+      <h1 class="hero-title">
+        Desa Jatiharjo<br>
+        <span class="text-orange-bright">Sentra Tani &amp; Ternak</span> Sehat
+      </h1>
+      <p class="hero-subtitle">
+        Menyelaraskan kearifan tanah lereng Gunung Lawu, melestarikan tradisi bercocok tanam & beternak, serta memberdayakan produk UMKM lokal unggulan menuju etalase desa mandiri berdaya saing.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#pertanian" class="btn-primary">
+          Jelajahi Potensi Desa
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+        <a href="#umkm" class="btn-secondary">
+          Lihat Produk UMKM
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== KEY STATS STRIP ==================== -->
+  <div class="container-custom stats-strip">
+    <div class="stats-card-grid">
+      <div class="stat-item">
+        <div class="stat-icon-wrapper">
+          <!-- Rice plant icon -->
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
+        <div>
+          <div class="stat-number" id="stat-sawah-val" data-target="450">0</div>
+          <div class="stat-label" id="stat-sawah-label">Hektar Lahan Sawah Produktif</div>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon-wrapper">
+          <!-- Cattle icon -->
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <div>
+          <div class="stat-number" id="stat-sapi-val" data-target="1200">0</div>
+          <div class="stat-label" id="stat-sapi-label">Ekor Populasi Sapi Ternak</div>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon-wrapper">
+          <!-- Shopping bag icon -->
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        </div>
+        <div>
+          <div class="stat-number" id="stat-umkm-val" data-target="35">0</div>
+          <div class="stat-label" id="stat-umkm-label">UMKM Olahan & Kerajinan</div>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon-wrapper">
+          <!-- Users group icon -->
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div>
+          <div class="stat-number" id="stat-poktan-val" data-target="12">0</div>
+          <div class="stat-label" id="stat-poktan-label">Kelompok Tani & Ternak</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== ABOUT & STORYTELLING ==================== -->
+  <section class="section-padding reveal">
+    <div class="container-custom">
+      <div class="section-header">
+        <span class="section-subtitle">Tentang Jatiharjo</span>
+        <h2 class="section-title">Harmoni Alam, Kesuburan Tanah & Kerja Keras Warga</h2>
+        <p class="section-description">
+          Terletak di wilayah strategis Kecamatan Jatipuro, Kabupaten Karanganyar, Desa Jatiharjo diberkahi iklim sejuk khas lereng selatan Gunung Lawu, sumber air alami melimpah, serta etos kerja warga yang mengutamakan gotong royong dalam mengelola bumi.
+        </p>
+      </div>
+
+      <div class="pillar-grid">
+        <!-- Pillar 1: Pertanian -->
+        <div class="pillar-card green">
+          <div class="pillar-icon">🌾</div>
+          <h3 class="pillar-title">Pertanian</h3>
+          <p class="pillar-text">
+            Sistem pertanian modern berkelanjutan yang menghasilkan berbagai komoditas pangan berkualitas seperti biji-bijian, sayuran organik, dan buah-buahan premium dengan teknik irigasi presisi dan pemupukan alami.
+          </p>
+          <a href="#pertanian" class="pillar-link">
+            Selengkapnya 
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+
+        <!-- Pillar 2: Peternakan -->
+        <div class="pillar-card blue">
+          <div class="pillar-icon">🐄</div>
+          <h3 class="pillar-title">Peternakan</h3>
+          <p class="pillar-text">
+            Pusat budidaya dan pemeliharaan hewan ternak yang sehat, termasuk sapi, kambing, dan domba, menggunakan sistem pakan alami yang diformulasi khusus serta manajemen limbah organik untuk keberlanjutan.
+          </p>
+          <a href="#peternakan" class="pillar-link" style="color:var(--primary-blue);">
+            Selengkapnya 
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+
+        <!-- Pillar 3: UMKM -->
+        <div class="pillar-card gold">
+          <div class="pillar-icon">🛍️</div>
+          <h3 class="pillar-title">UMKM</h3>
+          <p class="pillar-text">
+            Olahan pangan cita rasa khas daerah, camilan tradisional ramah keluarga, serta kerajinan bambu buatan tangan langsung dari para pengrajin desa.
+          </p>
+          <a href="#umkm" class="pillar-link" style="color:var(--accent-gold);">
+            Selengkapnya 
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== PERTANIAN SECTION ==================== -->
+  <section id="pertanian" class="section-padding reveal" style="background:var(--bg-alt);">
+    <div class="container-custom">
+      <div class="feature-split">
+        <div class="feature-img-box">
+          <!-- foto petani Desa Jatiharjo -->
+          <img src="assets/images/pertanian.jpg" alt="Petani Memanen Gabah Desa Jatiharjo" class="feature-img" loading="lazy">
+          <div class="feature-badge-floating">
+            <div style="font-size:0.8rem; font-weight:700; color:var(--primary-green);">PANEN GABAH BERKALA</div>
+            <div style="font-size:1.1rem; font-weight:800;">3 Kali Musim Tanam / Tahun</div>
+          </div>
+        </div>
+
+        <div>
+          <span class="section-subtitle">Pilar Utama Pertanian</span>
+          <h2 class="section-title" style="margin-bottom:1.25rem;">Gabah Pilihan Berkualitas Dari Sawah Jatiharjo</h2>
+          <p class="section-description" style="margin-bottom:2rem;">
+            Desa Jatiharjo adalah sentra produksi <strong style="color:var(--primary-green);">gabah</strong> — hasil panen langsung dari sawah yang dikelola secara turun-temurun. Dengan memanfaatkan air pegunungan jernih dan teknik pertanian berkelanjutan, kelompok tani menghasilkan gabah berkualitas tinggi, penuh butir, dan bebas pestisida berbahaya.
+          </p>
+
+          <div class="timeline-list">
+            <div class="timeline-item">
+              <div class="timeline-step">1</div>
+              <div class="timeline-content">
+                <h4>Olah Lahan &amp; Pengairan Alami</h4>
+                <p>Persiapan lahan sawah menggunakan pupuk kandang sapi organik dan saluran irigasi pegunungan yang terjaga kebersihannya sepanjang musim tanam.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-step">2</div>
+              <div class="timeline-content">
+                <h4>Tanam Bibit Varietas Unggul</h4>
+                <p>Pemilihan benih Pandan Wangi &amp; Mentik Wangi bersertifikasi, menghasilkan gabah dengan butiran padat, bernas, dan beraroma khas lereng Gunung Lawu.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-step">3</div>
+              <div class="timeline-content">
+                <h4>Panen &amp; Pengeringan Gabah</h4>
+                <p>Gabah dipanen manual oleh petani lokal, dikeringkan di bawah sinar matahari secara tradisional hingga kadar air optimal sebelum siap dijual atau digiling.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:2rem;">
+            <a id="btn-wa-tani" href="https://wa.me/6281234567890?text=Halo%20Pengelola%20Kelompok%20Tani%20Desa%20Jatiharjo,%20saya%20ingin%20tanya%20mengenai%20potensi%20gabah/beras." target="_blank" rel="noopener" class="btn-primary" style="background:linear-gradient(135deg, var(--primary-green), var(--primary-green-dark)); box-shadow:0 8px 20px rgba(46, 125, 50, 0.3);">
+              Hubungi Kelompok Tani
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== PETERNAKAN SECTION ==================== -->
+  <section id="peternakan" class="section-padding reveal">
+    <div class="container-custom">
+      <div class="feature-split" style="direction:ltr;">
+        <div>
+          <span class="section-subtitle" style="color:var(--primary-blue);">Pilar Utama Peternakan</span>
+          <h2 class="section-title">Sentra Peternakan Sapi Sehat & Ekosistem Sirkular</h2>
+          <p class="section-description" style="margin-bottom:1.5rem;">
+            Peternakan sapi di Desa Jatiharjo merupakan modal ekonomi utama warga. Dengan pola pemeliharaan komunal dan pakan rumput gajah serta legum segar, sapi tumbuh sehat dengan kualitas daging yang prime.
+          </p>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:2rem;">
+            <div style="background:var(--bg-surface); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <h4 style="color:var(--primary-blue); font-size:1.1rem; margin-bottom:0.35rem;">Varietas Sapi</h4>
+              <p style="font-size:0.9rem; color:var(--text-muted);">Simmental, Limosin, dan Sapi Jawa Super.</p>
+            </div>
+            <div style="background:var(--bg-surface); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <h4 style="color:var(--primary-blue); font-size:1.1rem; margin-bottom:0.35rem;">Integrasi Organik</h4>
+              <p style="font-size:0.9rem; color:var(--text-muted);">Kotoran diolah menjadi pupuk kompos & bio-gas.</p>
+            </div>
+          </div>
+
+          <a id="btn-wa-ternak" href="https://wa.me/6281234567890?text=Halo%20Pengelola%20Peternakan%20Desa%20Jatiharjo,%20saya%20ingin%20tanya%20mengenai%20potensi%20ternak%20sapi/pupuk." target="_blank" rel="noopener" class="btn-primary" style="background:linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark)); box-shadow:0 8px 20px rgba(13, 71, 161, 0.3);">
+            Hubungi Kelompok Ternak
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          </a>
+        </div>
+
+        <div class="feature-img-box">
+          <!-- ganti dengan foto asli desa -->
+          <img src="assets/images/peternakan.png" alt="Peternakan Sapi Simmental Desa Jatiharjo" class="feature-img">
+          <div class="feature-badge-floating" style="bottom:1.5rem; left:auto; right:1.5rem;">
+            <div style="font-size:0.8rem; font-weight:700; color:var(--primary-blue);">KUALITAS TERJAGA</div>
+            <div style="font-size:1.1rem; font-weight:800;">Pengawasan Dokter Hewan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== UMKM CATALOG SECTION ==================== -->
+  <section id="umkm" class="section-padding reveal" style="background:var(--bg-alt);">
+    <div class="container-custom">
+      <div class="section-header">
+        <span class="section-subtitle" style="color:var(--accent-gold);">Etalase Produk Warga</span>
+        <h2 class="section-title">Katalog UMKM & Hasil Bumi Jatiharjo</h2>
+        <p class="section-description">
+          Dukung perekonomian warga lokal dengan membeli langsung produk olahan pangan khas, beras pilihan, serta kerajinan tangan bermutu tinggi buatan tangan warga Desa Jatiharjo.
+        </p>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tab-group">
+        <button class="filter-btn active" data-filter="all">Semua Produk</button>
+        <button class="filter-btn" data-filter="hasil-bumi">Hasil Bumi & Beras</button>
+        <button class="filter-btn" data-filter="makanan">Olahan Pangan</button>
+        <button class="filter-btn" data-filter="kerajinan">Kerajinan Tangan</button>
+      </div>
+
+      <!-- UMKM Cards Grid -->
+      <div class="umkm-grid" id="umkm-grid-container">
+        
+        <!-- Product 1 -->
+        <div class="umkm-card" data-category="hasil-bumi">
+          <div class="umkm-img-wrapper">
+            <!-- ganti dengan foto asli desa -->
+            <img src="assets/images/umkm.png" alt="Beras Mentik Wangi Premium" class="umkm-img">
+            <span class="umkm-category-badge">Hasil Bumi</span>
+          </div>
+          <div class="umkm-body">
+            <div class="umkm-owner">Kelompok Tani Tani Makmur</div>
+            <h3 class="umkm-title">Beras Mentik Wangi Premium 5kg</h3>
+            <p class="umkm-desc">Beras asli panen sawah Jatiharjo. Aroma wangi alami, bertekstur pulen, bebas pemutih dan pestisida berbahaya.</p>
+            <div class="umkm-footer">
+              <span class="umkm-price">Rp 75.000 / 5kg</span>
+              <button onclick="openProductModal('Beras Mentik Wangi Premium 5kg', 'Kelompok Tani Tani Makmur', 'Hasil Bumi', 'Beras asli panen sawah Jatiharjo. Aroma wangi alami, bertekstur pulen, bebas pemutih dan pestisida berbahaya.', 'Rp 75.000 / 5kg', 'assets/images/umkm.png', '6281234567890')" class="btn-wa-order">
+                Detail / Pesan
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="umkm-card" data-category="makanan">
+          <div class="umkm-img-wrapper">
+            <!-- ganti dengan foto asli desa -->
+            <img src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=800&auto=format&fit=crop" alt="Keripik Pisang Renyah Jatiharjo" class="umkm-img">
+            <span class="umkm-category-badge">Olahan Pangan</span>
+          </div>
+          <div class="umkm-body">
+            <div class="umkm-owner">UMKM Ibu Lestari</div>
+            <h3 class="umkm-title">Keripik Pisang Renyah Aneka Rasa</h3>
+            <p class="umkm-desc">Dibuat dari pisang kepok pilihan hasil kebun desa. Irisan tipis renyah dengan varian manis karamel, cokelat & asin gurih.</p>
+            <div class="umkm-footer">
+              <span class="umkm-price">Rp 15.000 / pack</span>
+              <button onclick="openProductModal('Keripik Pisang Renyah Aneka Rasa', 'UMKM Ibu Lestari', 'Olahan Pangan', 'Dibuat dari pisang kepok pilihan hasil kebun desa. Irisan tipis renyah dengan varian manis karamel, cokelat & asin gurih.', 'Rp 15.000 / pack', 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=800&auto=format&fit=crop', '6281234567890')" class="btn-wa-order">
+                Detail / Pesan
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="umkm-card" data-category="hasil-bumi">
+          <div class="umkm-img-wrapper">
+            <!-- ganti dengan foto asli desa -->
+            <img src="assets/images/peternakan.png" alt="Pupuk Organik Sapi Super 25kg" class="umkm-img">
+            <span class="umkm-category-badge">Hasil Bumi</span>
+          </div>
+          <div class="umkm-body">
+            <div class="umkm-owner">Kelompok Ternak Lembu Sejahtera</div>
+            <h3 class="umkm-title">Pupuk Organik Kompos Sapi 25kg</h3>
+            <p class="umkm-desc">Pupuk kompos olahan kotoran sapi fermentasi matang. Sangat kaya hara untuk menyuburkan tanaman buah, sayur & bunga.</p>
+            <div class="umkm-footer">
+              <span class="umkm-price">Rp 30.000 / karung</span>
+              <button onclick="openProductModal('Pupuk Organik Kompos Sapi 25kg', 'Kelompok Ternak Lembu Sejahtera', 'Hasil Bumi', 'Pupuk kompos olahan kotoran sapi fermentasi matang. Sangat kaya hara untuk menyuburkan tanaman buah, sayur & bunga.', 'Rp 30.000 / karung', 'assets/images/peternakan.png', '6281234567890')" class="btn-wa-order">
+                Detail / Pesan
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="umkm-card" data-category="makanan">
+          <div class="umkm-img-wrapper">
+            <!-- ganti dengan foto asli desa -->
+            <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=800&auto=format&fit=crop" alt="Gula Jawa Kelapa Asli" class="umkm-img">
+            <span class="umkm-category-badge">Olahan Pangan</span>
+          </div>
+          <div class="umkm-body">
+            <div class="umkm-owner">UMKM Pak Mulyono</div>
+            <h3 class="umkm-title">Gula Jawa / Gula Kelapa Murni 1kg</h3>
+            <p class="umkm-desc">Gula kelapa cetak tradisional dari nira murni tanpa campuran gula pasir atau bahan kimia. Legit dan beraroma harum alami.</p>
+            <div class="umkm-footer">
+              <span class="umkm-price">Rp 22.000 / kg</span>
+              <button onclick="openProductModal('Gula Jawa / Gula Kelapa Murni 1kg', 'UMKM Pak Mulyono', 'Olahan Pangan', 'Gula kelapa cetak tradisional dari nira murni tanpa campuran gula pasir atau bahan kimia. Legit dan beraroma harum alami.', 'Rp 22.000 / kg', 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=800&auto=format&fit=crop', '6281234567890')" class="btn-wa-order">
+                Detail / Pesan
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 5 -->
+        <div class="umkm-card" data-category="kerajinan">
+          <div class="umkm-img-wrapper">
+            <!-- ganti dengan foto asli desa -->
+            <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop" alt="Anyaman Bambu Tradisional" class="umkm-img">
+            <span class="umkm-category-badge">Kerajinan</span>
+          </div>
+          <div class="umkm-body">
+            <div class="umkm-owner">Sanggar Bambu Jatiharjo</div>
+            <h3 class="umkm-title">Keranjang & Tampah Anyaman Bambu</h3>
+            <p class="umkm-desc">Kerajinan anyaman bambu halus serbaguna untuk wadah saji, dekorasi etnik rumah, dan tempat belanja ramah lingkungan.</p>
+            <div class="umkm-footer">
+              <span class="umkm-price">Rp 35.000 / unit</span>
+              <button onclick="openProductModal('Keranjang & Tampah Anyaman Bambu', 'Sanggar Bambu Jatiharjo', 'Kerajinan', 'Kerajinan anyaman bambu halus serbaguna untuk wadah saji, dekorasi etnik rumah, dan tempat belanja ramah lingkungan.', 'Rp 35.000 / unit', 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop', '6281234567890')" class="btn-wa-order">
+                Detail / Pesan
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 6 -->
+        <div class="umkm-card" data-category="makanan">
+          <div class="umkm-img-wrapper">
+            <!-- ganti dengan foto asli desa -->
+            <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=800&auto=format&fit=crop" alt="Emping Garut Tradisional" class="umkm-img">
+            <span class="umkm-category-badge">Olahan Pangan</span>
+          </div>
+          <div class="umkm-body">
+            <div class="umkm-owner">UMKM Berkah Bersama</div>
+            <h3 class="umkm-title">Emping Garut & Kerupuk Desa 250g</h3>
+            <p class="umkm-desc">Olahan emping dari umbi garut lokal yang kaya serat dan baik untuk kesehatan pencernaan. Gurih renyah tanpa bahan pengawet.</p>
+            <div class="umkm-footer">
+              <span class="umkm-price">Rp 18.000 / pack</span>
+              <button onclick="openProductModal('Emping Garut & Kerupuk Desa 250g', 'UMKM Berkah Bersama', 'Olahan Pangan', 'Olahan emping dari umbi garut lokal yang kaya serat dan baik untuk kesehatan pencernaan. Gurih renyah tanpa bahan pengawet.', 'Rp 18.000 / pack', 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=800&auto=format&fit=crop', '6281234567890')" class="btn-wa-order">
+                Detail / Pesan
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Banner Promo UMKM Registration -->
+      <div style="margin-top:4rem; background:linear-gradient(135deg, var(--primary-green-dark), var(--primary-green)); border-radius:var(--radius-lg); padding:3rem 2rem; color:#FFFFFF; text-align:center; box-shadow:var(--shadow-lg);">
+        <h3 style="font-size:1.75rem; font-weight:800; margin-bottom:0.75rem; color:#FFFFFF;">Ingin Memasarkan Produk UMKM Anda di Sini?</h3>
+        <p style="font-size:1.05rem; max-width:640px; margin:0 auto 1.75rem auto; color:rgba(255,255,255,0.9);">
+          Pemerintah Desa Jatiharjo menyediakan fasilitas Etalase Digital gratis bagi seluruh pelaku usaha dan kelompok tani di wilayah Desa Jatiharjo.
+        </p>
+        <a id="btn-wa-daftar-umkm" href="https://wa.me/6281234567890?text=Halo%20Admin%20Desa%20Jatiharjo,%20saya%20warga%20Jatiharjo%20ingin%20mendaftarkan%20produk%20UMKM%20ke%20website." target="_blank" rel="noopener" class="btn-secondary" style="background:#FFFFFF; color:var(--primary-green-dark); font-weight:800;">
+          Daftarkan Produk UMKM Gratis
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== GALLERY SECTION ==================== -->
+  <section id="galeri" class="section-padding reveal">
+    <div class="container-custom">
+      <div class="section-header">
+        <span class="section-subtitle">Dokumentasi Desa</span>
+        <h2 class="section-title">Galeri Keaslian & Aktivitas Desa</h2>
+        <p class="section-description">
+          Potret suasana keindahan alam, keceriaan panen raya, hingga kehangatan kebersamaan warga di Desa Jatiharjo, Jatipuro, Karanganyar.
+        </p>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <!-- ganti dengan foto asli desa -->
+          <img src="assets/images/hero.png" alt="Sawah Terasering Jatipuro">
+          <div class="gallery-overlay">
+            <h4 style="font-size:1.1rem; font-weight:700; color:#fff;">Sawah Terasering Pagi Hari</h4>
+            <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Pemandangan hijau segar lereng Lawu</p>
+          </div>
+        </div>
+
+        <div class="gallery-item">
+          <!-- foto petani desa -->
+          <img src="assets/images/pertanian.jpg" alt="Petani Memanen Gabah Jatiharjo">
+          <div class="gallery-overlay">
+            <h4 style="font-size:1.1rem; font-weight:700; color:#fff;">Kegiatan Panen Raya Padi</h4>
+            <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Gotong royong warga memanen gabah</p>
+          </div>
+        </div>
+
+        <div class="gallery-item">
+          <!-- ganti dengan foto asli desa -->
+          <img src="assets/images/peternakan.png" alt="Peternakan Sapi Sehat">
+          <div class="gallery-overlay">
+            <h4 style="font-size:1.1rem; font-weight:700; color:#fff;">Kandang Sapi Komunal</h4>
+            <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Pemeliharaan sapi Simmental unggul</p>
+          </div>
+        </div>
+
+        <div class="gallery-item">
+          <!-- ganti dengan foto asli desa -->
+          <img src="assets/images/umkm.png" alt="Produk UMKM Jatiharjo">
+          <div class="gallery-overlay">
+            <h4 style="font-size:1.1rem; font-weight:700; color:#fff;">Hasil Bumi & Produk UMKM</h4>
+            <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Produk olahan warga bernilai tambah</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== KONTAK & LOKASI SECTION ==================== -->
+  <section id="kontak" class="section-padding reveal" style="background:var(--bg-alt);">
+    <div class="container-custom">
+      <div class="section-header">
+        <span class="section-subtitle">Pusat Informasi & Kerjasama</span>
+        <h2 class="section-title">Hubungi Pengelola Etalase Desa</h2>
+        <p class="section-description">
+          Tertarik untuk memesan gabah, hewan ternak, produk UMKM, atau menjajaki kerjasama distribusi? Hubungi kami melalui alamat lokasi peta atau kontak WhatsApp resmi di bawah ini.
+        </p>
+      </div>
+
+      <div style="max-width: 800px; margin: 0 auto; display:flex; flex-direction:column; gap:1.5rem;">
+        <!-- Location Map & Info -->
+        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+          <div class="map-container">
+            <!-- Google Maps Embed for Jatiharjo Jatipuro Karanganyar -->
+            <iframe title="Peta Lokasi Desa Jatiharjo Jatipuro Karanganyar" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15814.070081827446!2d111.0092907!3d-7.7367074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a2669849cb90b%3A0x5027a76e356bfb0!2sJatiharjo%2C%20Kec.%20Jatipuro%2C%20Kabupaten%20Karanganyar%2C%20Jawa%20Tengah!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+
+          <div style="background:var(--bg-surface); padding:1.5rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); display:flex; flex-direction:column; gap:1rem;">
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <div style="width:40px; height:40px; border-radius:var(--radius-full); background:var(--primary-green-subtle); color:var(--primary-green); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </div>
+              <div>
+                <strong style="display:block; font-size:0.95rem;">Alamat Desa</strong>
+                <span style="font-size:0.9rem; color:var(--text-muted);">Desa Jatiharjo, Kec. Jatipuro, Kab. Karanganyar, Jawa Tengah 57784</span>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <div style="width:40px; height:40px; border-radius:var(--radius-full); background:var(--primary-green-subtle); color:var(--primary-green); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              <div>
+                <strong style="display:block; font-size:0.95rem;">Kontak WhatsApp Admin</strong>
+                <span style="font-size:0.9rem; color:var(--text-muted);">+62 812-3456-7890 (Layanan 08.00 - 16.00 WIB)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="site-footer">
+    <div class="container-custom">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>Desa Jatiharjo</h3>
+          <p>
+            Kecamatan Jatipuro, Kabupaten Karanganyar, Jawa Tengah.<br>
+            Etalase digital independen promosi komoditas pertanian padi, peternakan sapi, dan pemberdayaan produk UMKM lokal masyarakat.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Lokasi & Wilayah</h4>
+          <p style="font-size:0.9rem; color:#94A89C; margin-bottom:1rem; line-height:1.6;">
+            Kawasan pertanian & peternakan subur di lereng selatan Gunung Lawu, Karanganyar, Jawa Tengah.
+          </p>
+          <div style="font-size:0.85rem; color:#4CAF50; font-weight:700;">
+            #JatiharjoBisa #KaranganyarMaju #DesaMandiri
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 Desa Jatiharjo, Jatipuro, Karanganyar. Hak Cipta Dilindungi.
+        </div>
+        <div style="font-size:0.85rem; color:#A3B8AC; font-weight:600;">
+          Kelompok 3 Jatipuro KKN PRIMA UMUKA 2026
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ==================== GLOBAL MODAL CONTAINER ==================== -->
+  <div id="modal-backdrop" class="modal-backdrop" onclick="if(event.target === this) closeModal()">
+    <div class="modal-content-box">
+      <button class="modal-close-btn" onclick="closeModal()" aria-label="Tutup Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div id="modal-body-content">
+        <!-- Content inserted dynamically by script.js -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== BACK TO TOP BUTTON ==================== -->
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+  </button>
+
+
+  <!-- Scripts -->
+  <script src="script.js" defer></script>
+</body>
+</html>

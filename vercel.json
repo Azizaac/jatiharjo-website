@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "functions": {
+    "**/*.php": {
+      "runtime": "vercel-php@0.6.0"
+    }
+  },
+  "routes": [
+    {
+      "src": "/data\\.json",
+      "status": 403,
+      "dest": "/index.html"
+    },
+    {
+      "src": "/assets/images/uploads/(.*)\\.php$",
+      "status": 403,
+      "dest": "/index.html"
+    },
+    {
+      "handle": "filesystem"
+    }
+  ]
+}

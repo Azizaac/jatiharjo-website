@@ -1,0 +1,15 @@
+# Block all PHP file execution in this uploads directory.
+# This prevents Remote Code Execution (RCE) via malicious uploaded files.
+
+<FilesMatch "\.(php|php3|php4|php5|php7|phtml|phps|phar|shtml|asp|aspx|cgi|pl|py|rb|sh)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Also block .htaccess override within this folder
+<Files ".htaccess">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+Options -Indexes -ExecCGI
