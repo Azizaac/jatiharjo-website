@@ -1,23 +1,33 @@
 {
   "version": 2,
   "functions": {
-    "**/*.php": {
+    "api/index.php": {
       "runtime": "vercel-php@0.6.0"
     }
   },
   "routes": [
     {
       "src": "/data\\.json",
-      "status": 403,
-      "dest": "/index.html"
+      "status": 403
     },
     {
       "src": "/assets/images/uploads/(.*)\\.php$",
-      "status": 403,
-      "dest": "/index.html"
+      "status": 403
+    },
+    {
+      "src": "/(.*\\.php)$",
+      "dest": "/api/index.php"
+    },
+    {
+      "src": "/admin/?",
+      "dest": "/api/index.php"
     },
     {
       "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
