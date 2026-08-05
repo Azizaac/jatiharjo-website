@@ -26,13 +26,16 @@ $content = null;
 
 // 2. Fetch dari Supabase Storage jika dikonfigurasi
 if ($supabaseUrl && $supabaseKey) {
-    // Bucket uploads bersifat public, jadi kita bisa akses public URL
-    $storageUrl = rtrim($supabaseUrl, '/') . '/storage/v1/object/public/uploads/data.json';
+    // Gunakan endpoint terautentikasi (bukan public) agar tidak ter-cache oleh CDN Supabase
+    $storageUrl = rtrim($supabaseUrl, '/') . '/storage/v1/object/uploads/data.json';
     
-    // Gunakan cURL untuk menghindari masalah allow_url_fopen di Vercel
     $ch = curl_init($storageUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "apikey: $supabaseKey",
+        "Authorization: Bearer $supabaseKey"
+    ]);
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);

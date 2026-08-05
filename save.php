@@ -63,10 +63,14 @@ $dataFile = __DIR__ . '/data.json';
 // --- HELPERS ---
 function getJsonData($filePath, $useSupabase, $url, $key) {
     if ($useSupabase) {
-        $storageUrl = rtrim($url, '/') . '/storage/v1/object/public/uploads/data.json';
+        $storageUrl = rtrim($url, '/') . '/storage/v1/object/uploads/data.json';
         $ch = curl_init($storageUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "apikey: $key",
+            "Authorization: Bearer $key"
+        ]);
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
