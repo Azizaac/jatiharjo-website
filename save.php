@@ -4,13 +4,7 @@
  * Menggunakan Supabase PostgreSQL (PostgREST) untuk CRUD.
  */
 
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'Strict');
-ini_set('session.use_strict_mode', 1);
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/auth.php';
 
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
@@ -19,22 +13,14 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Content-Type: application/json; charset=utf-8');
 
 // --- AUTH CHECK ---
-if (empty($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+if (!verify_stateless_session()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Akses ditolak. Silakan login terlebih dahulu.']);
     exit;
 }
 
-if (!empty($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > 3600) {
-    session_unset();
-    session_destroy();
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Sesi Anda telah habis. Silakan login kembali.']);
-    exit;
-}
-
 $submittedToken = $_POST['csrf_token'] ?? '';
-if (empty($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $submittedToken)) {
+if (!verify_csrf_token($submittedToken)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'Token keamanan tidak valid. Silakan refresh halaman.']);
     exit;

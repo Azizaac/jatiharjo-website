@@ -10,17 +10,10 @@
  * - Secure session cookie settings
  */
 
-// --- Secure Session Configuration ---
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'Strict');
-ini_set('session.use_strict_mode', 1);
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/../auth.php';
 
 // Redirect if already logged in
-if (!empty($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+if (verify_stateless_session()) {
     header('Location: /admin/index.php');
     exit;
 }
@@ -63,8 +56,11 @@ function rl_clear($ip, $f) {
 }
 
 // --- CSRF TOKEN ---
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+// CSRF token di-set saat login page dimuat jika belum ada
+if (empty($_COOKIE['csrf_token'])) {
+    $csrf = bin2hex(random_bytes(32));
+    setcookie('csrf_token', $csrf, time() + 7200, '/', '', true, false);
+    $_COOKIE['csrf_token'] = $csrf;
 }
 
 $error    = '';
@@ -75,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 1. Cek CSRF
     $tok = $_POST['csrf_token'] ?? '';
-    if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $tok)) {
+    if (!verify_csrf_token($tok)) {
         $error = 'Token tidak valid. Silakan refresh halaman.';
     }
     // 2. Cek rate limit
@@ -90,10 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (hash_equals(ADMIN_USERNAME, $username) && password_verify($password, ADMIN_PASSWORD_HASH)) {
             // Login berhasil
             rl_clear($clientIp, $rateLimitFile);
-            session_regenerate_id(true);
-            $_SESSION['admin_logged_in'] = true;
-            $_SESSION['admin_username']  = $username;
-            $_SESSION['login_time']      = time();
+            set_stateless_session($username);
             header('Location: /admin/index.php');
             exit;
         } else {
@@ -102,8 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Regenerate CSRF setelah setiap POST
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    // Regenerate CSRF setelah setiap POST yang gagal
+    $csrf = bin2hex(random_bytes(32));
+    setcookie('csrf_token', $csrf, time() + 7200, '/', '', true, false);
+    $_COOKIE['csrf_token'] = $csrf;
 }
 
 // Security headers
@@ -148,7 +143,7 @@ header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-in
 
     <?php if (!$locked): ?>
     <form action="login.php" method="POST" class="admin-form" autocomplete="off">
-      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_COOKIE['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
       <div class="form-group">
         <label class="form-label" for="username">Username Admin</label>

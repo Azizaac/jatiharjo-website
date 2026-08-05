@@ -13,21 +13,15 @@ ini_set('session.use_strict_mode', 1);
 
 require_once __DIR__ . '/auth-check.php';
 
-// Session timeout (1 hour)
-if (!empty($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > 3600) {
-    session_unset();
-    session_destroy();
-    header('Location: /admin/login.php?timeout=1');
-    exit;
+// Username from stateless cookie
+$username = 'Admin';
+if (isset($_COOKIE['admin_session'])) {
+    $parts = explode('|', $_COOKIE['admin_session']);
+    if (count($parts) === 4) {
+        $username = htmlspecialchars($parts[1], ENT_QUOTES, 'UTF-8');
+    }
 }
-
-// Generate CSRF token if not set
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-
-$username  = htmlspecialchars($_SESSION['admin_username'] ?? 'Admin', ENT_QUOTES, 'UTF-8');
-$csrfToken = $_SESSION['csrf_token'];
+$csrfToken = $_COOKIE['csrf_token'] ?? '';
 
 // Security headers
 header('X-Frame-Options: DENY');
@@ -41,7 +35,7 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+  <meta name="csrf-token" content="<?= htmlspecialchars($_COOKIE['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
   <title>Dashboard Admin — Desa Jatiharjo</title>
   
   <!-- Google Fonts - Montserrat -->
