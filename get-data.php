@@ -83,6 +83,13 @@ if (isset($products['message'])) {
     $products = [];
 }
 
+// Convert legacy image_path from png/jpg to webp dynamically to save bandwidth and prevent 404s
+foreach ($products as &$p) {
+    if (isset($p['image_path'])) {
+        $p['image_path'] = str_replace(['.png', '.jpg', '.jpeg'], '.webp', $p['image_path']);
+    }
+}
+
 $settingsRaw = json_decode($settingsRes, true) ?: [];
 
 $settings = [];
