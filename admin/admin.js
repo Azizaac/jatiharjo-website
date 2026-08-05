@@ -161,6 +161,7 @@ function openAddProductModal() {
   document.getElementById('product-id').value = '';
   document.getElementById('image-url-input').value = '';
   document.getElementById('preview-img').src = '/assets/images/umkm.png';
+  window.compressedImageBlob = null; // Reset compressed image
   document.getElementById('product-modal-backdrop').classList.add('active');
 }
 
@@ -181,6 +182,7 @@ function openEditProductModal(id) {
 
   const imgSrc = getSafeImageSrc(p.image_path);
   document.getElementById('preview-img').src = imgSrc;
+  window.compressedImageBlob = null; // Reset compressed image
 
   document.getElementById('product-modal-backdrop').classList.add('active');
 }
@@ -192,22 +194,41 @@ function closeAdminModal() {
 function handleImagePreview(input) {
   if (input.files && input.files[0]) {
     const file = input.files[0];
-    // Validate file size on client side (2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      alert('Ukuran file terlalu besar. Maksimum 2MB.');
-      input.value = '';
-      return;
-    }
-    // Validate file type on client side
+    
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       alert('Tipe file tidak diizinkan. Hanya JPG, PNG, dan WEBP.');
       input.value = '';
       return;
     }
+
     const reader = new FileReader();
     reader.onload = function(e) {
-      document.getElementById('preview-img').src = e.target.result;
+      const img = new Image();
+      img.onload = function() {
+        // Client-side compression using Canvas
+        const MAX_WIDTH = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > MAX_WIDTH) {
+          height = Math.round((height * MAX_WIDTH) / width);
+          width = MAX_WIDTH;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Compress to WebP at 80% quality
+        canvas.toBlob((blob) => {
+          window.compressedImageBlob = blob;
+          document.getElementById('preview-img').src = URL.createObjectURL(blob);
+        }, 'image/webp', 0.8);
+      };
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -223,6 +244,11 @@ function initFormListeners() {
       const formData = new FormData(productForm);
       formData.set('action', 'save_product');
       formData.set('csrf_token', getCsrfToken());
+
+      // If we have a compressed image, inject it into formData
+      if (window.compressedImageBlob) {
+        formData.set('image_file', window.compressedImageBlob, 'compressed.webp');
+      }
 
       try {
         const res = await fetch('/save.php', {

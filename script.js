@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
 /* 0. FETCH DYNAMIC DATA FROM DATA.JSON (ZERO DATABASE) */
 async function fetchDynamicData() {
   try {
-    // Fetch via PHP endpoint (data.json is blocked via .htaccess for direct access)
-    const res = await fetch('get-data.php?v=' + new Date().getTime());
+    // Ambil data (tanpa query string agar bisa dicache oleh Vercel CDN untuk pengunjung publik)
+    const res = await fetch('get-data.php');
     const data = await res.json();
 
     if (data.settings) {

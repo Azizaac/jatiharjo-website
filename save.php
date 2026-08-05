@@ -180,6 +180,7 @@ try {
                 "apikey: $supabaseKey",
                 "Authorization: Bearer $supabaseKey"
             ]);
+            curl_setopt($chMax, CURLOPT_ENCODING, ""); // Auto-GZIP Compression
             $maxRes = curl_exec($chMax);
             curl_close($chMax);
             
@@ -281,6 +282,7 @@ try {
                 "Content-Type: application/json",
                 "Prefer: resolution=merge-duplicates"
             ]);
+            curl_setopt($ch, CURLOPT_ENCODING, ""); // Auto-GZIP Compression
             $res = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);

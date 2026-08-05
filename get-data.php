@@ -4,7 +4,9 @@
  * Mengambil data dari Supabase PostgreSQL Database (Realtime DB).
  */
 header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: no-store, no-cache, must-revalidate');
+// Izinkan Vercel CDN mencache data publik selama 60 detik untuk performa super cepat,
+// tapi tetap izinkan bypass jika URL mengandung query string unik (seperti di admin.js)
+header('Cache-Control: public, s-maxage=60, stale-while-revalidate=300');
 
 $envPath = __DIR__ . '/.env';
 if (file_exists($envPath)) {
@@ -23,35 +25,64 @@ if (!$supabaseUrl || !$supabaseKey) {
     exit;
 }
 
-// Fetch Products (Diurutkan berdasarkan ID)
+// Siapkan Multiple cURL untuk Parallel Requests
+$mh = curl_multi_init();
+
+// Request 1: Fetch Products
 $productsUrl = rtrim($supabaseUrl, '/') . '/rest/v1/products?select=*&order=id.asc';
 $chP = curl_init($productsUrl);
 curl_setopt($chP, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($chP, CURLOPT_TIMEOUT, 10);
+curl_setopt($chP, CURLOPT_ENCODING, ""); // Auto-GZIP Compression
 curl_setopt($chP, CURLOPT_HTTPHEADER, [
     "apikey: $supabaseKey",
     "Authorization: Bearer $supabaseKey"
 ]);
-$productsRes = curl_exec($chP);
-curl_close($chP);
-$products = json_decode($productsRes, true) ?: [];
+curl_multi_add_handle($mh, $chP);
 
-// Memastikan error dari PostgREST (misal tabel belum ada) tidak merusak JSON response
-if (isset($products['message'])) {
-    $products = [];
-}
-
-// Fetch Settings
+// Request 2: Fetch Settings
 $settingsUrl = rtrim($supabaseUrl, '/') . '/rest/v1/settings?select=*';
 $chS = curl_init($settingsUrl);
 curl_setopt($chS, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($chS, CURLOPT_TIMEOUT, 10);
+curl_setopt($chS, CURLOPT_ENCODING, ""); // Auto-GZIP Compression
 curl_setopt($chS, CURLOPT_HTTPHEADER, [
     "apikey: $supabaseKey",
     "Authorization: Bearer $supabaseKey"
 ]);
-$settingsRes = curl_exec($chS);
-curl_close($chS);
+curl_multi_add_handle($mh, $chS);
+
+// Eksekusi secara paralel
+$active = null;
+do {
+    $mrc = curl_multi_exec($mh, $active);
+} while ($mrc == CURLM_CALL_MULTI_PERFORM);
+
+while ($active && $mrc == CURLM_OK) {
+    if (curl_multi_select($mh) == -1) {
+        usleep(100);
+    }
+    do {
+        $mrc = curl_multi_exec($mh, $active);
+    } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+}
+
+// Ambil hasil respons
+$productsRes = curl_multi_getcontent($chP);
+$settingsRes = curl_multi_getcontent($chS);
+
+// Bersihkan memory cURL
+curl_multi_remove_handle($mh, $chP);
+curl_multi_remove_handle($mh, $chS);
+curl_multi_close($mh);
+
+$products = json_decode($productsRes, true) ?: [];
+
+// Memastikan error dari PostgREST tidak merusak JSON response
+if (isset($products['message'])) {
+    $products = [];
+}
+
 $settingsRaw = json_decode($settingsRes, true) ?: [];
 
 $settings = [];
