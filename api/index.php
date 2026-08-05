@@ -19,6 +19,10 @@ $targetFile = realpath(__DIR__ . '/../' . $normalizedPath);
 $rootDir = realpath(__DIR__ . '/../');
 
 // Ensure target exists and is within the root directory (prevent LFI)
+if ($targetFile && is_dir($targetFile)) {
+    $targetFile = realpath($targetFile . '/index.php');
+}
+
 if ($targetFile && is_file($targetFile) && strpos($targetFile, $rootDir) === 0) {
     $extension = pathinfo($targetFile, PATHINFO_EXTENSION);
     
