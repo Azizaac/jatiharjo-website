@@ -125,15 +125,15 @@ header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-in
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="admin-styles.css">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/admin/admin-styles.css">
 </head>
 <body class="admin-login-body">
 
   <div class="login-card-container">
     <div class="login-card-header">
       <div class="brand-icon brand-icon-logo" style="margin: 0 auto 1rem auto; width: 56px; height: 56px;">
-        <img src="../assets/images/logo-karanganyar.png" alt="Logo Karanganyar" style="width:50px; height:50px; object-fit:contain; mix-blend-mode:multiply;" class="logo-karanganyar-img">
+        <img src="/assets/images/logo-karanganyar.png" alt="Logo Karanganyar" style="width:50px; height:50px; object-fit:contain; mix-blend-mode:multiply;" class="logo-karanganyar-img">
       </div>
       <h2>Dashboard Panel Admin</h2>
       <p>Branding Digital &amp; Etalase Desa Jatiharjo</p>
@@ -174,7 +174,7 @@ header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-in
     <?php endif; ?>
 
     <div style="text-align:center; margin-top:2rem; font-size:0.85rem; color:var(--text-muted);">
-      <a href="../index.html" style="color:var(--primary-green); text-decoration:none; font-weight:600;">← Kembali ke Halaman Utama Website</a>
+      <a href="/index.html" style="color:var(--primary-green); text-decoration:none; font-weight:600;">← Kembali ke Halaman Utama Website</a>
     </div>
   </div>
 

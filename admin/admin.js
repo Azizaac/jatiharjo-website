@@ -52,7 +52,7 @@ async function loadAllData() {
   try {
     // Add cache-buster to avoid stale data, but do NOT expose data.json path to arbitrary traversal
     // Fetch via PHP endpoint (data.json is blocked via .htaccess for direct access)
-    const res = await fetch('../get-data.php?v=' + new Date().getTime());
+    const res = await fetch('/get-data.php?v=' + new Date().getTime());
     if (!res.ok) throw new Error('HTTP error ' + res.status);
     const data = await res.json();
 
@@ -107,7 +107,7 @@ function renderProductsTable(products) {
       <tr>
         <td><strong>${idx + 1}</strong></td>
         <td>
-          <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(p.title)}" class="thumb-img" onerror="this.src='../assets/images/umkm.png'">
+          <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(p.title)}" class="thumb-img" onerror="this.src='/assets/images/umkm.png'">
         </td>
         <td>
           <strong>${escapeHtml(p.title)}</strong>
@@ -160,7 +160,7 @@ function openAddProductModal() {
   document.getElementById('product-form').reset();
   document.getElementById('product-id').value = '';
   document.getElementById('image-url-input').value = '';
-  document.getElementById('preview-img').src = '../assets/images/umkm.png';
+  document.getElementById('preview-img').src = '/assets/images/umkm.png';
   document.getElementById('product-modal-backdrop').classList.add('active');
 }
 
@@ -225,7 +225,7 @@ function initFormListeners() {
       formData.set('csrf_token', getCsrfToken());
 
       try {
-        const res = await fetch('../save.php', {
+        const res = await fetch('/save.php', {
           method: 'POST',
           body: formData,
           credentials: 'same-origin'
@@ -255,7 +255,7 @@ function initFormListeners() {
       formData.set('csrf_token', getCsrfToken());
 
       try {
-        const res = await fetch('../save.php', {
+        const res = await fetch('/save.php', {
           method: 'POST',
           body: formData,
           credentials: 'same-origin'
@@ -284,7 +284,7 @@ function initFormListeners() {
       formData.set('csrf_token', getCsrfToken());
 
       try {
-        const res = await fetch('../save.php', {
+        const res = await fetch('/save.php', {
           method: 'POST',
           body: formData,
           credentials: 'same-origin'
@@ -315,7 +315,7 @@ async function confirmDeleteProduct(id, title) {
   formData.append('csrf_token', getCsrfToken());
 
   try {
-    const res = await fetch('../save.php', {
+    const res = await fetch('/save.php', {
       method: 'POST',
       body: formData,
       credentials: 'same-origin'
@@ -369,11 +369,11 @@ function showAdminToast(msg, isError = false) {
 
 /* HELPER: Safe Image Source */
 function getSafeImageSrc(imagePath) {
-  if (!imagePath) return '../assets/images/umkm.png';
+  if (!imagePath) return '/assets/images/umkm.png';
   // If it starts with http/https, use as-is (external URL)
   if (/^https?:\/\//i.test(imagePath)) return imagePath;
   // Relative path — prepend ../ for admin context
-  return '../' + imagePath.replace(/^[./]+/, '');
+  return '/' + imagePath.replace(/^[./]+/, '');
 }
 
 /* HELPER: Escape HTML to prevent XSS */

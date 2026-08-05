@@ -50,8 +50,8 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="admin-styles.css">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/admin/admin-styles.css">
 </head>
 <body class="admin-body">
 
@@ -60,7 +60,7 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
     <div class="container-custom admin-nav-container">
       <div style="display:flex; align-items:center; gap:0.85rem;">
         <div class="brand-icon brand-icon-logo" style="width:38px; height:38px;">
-          <img src="../assets/images/logo-karanganyar.png" alt="Logo Karanganyar" style="width:34px; height:34px; object-fit:contain; mix-blend-mode:multiply;" class="logo-karanganyar-img">
+          <img src="/assets/images/logo-karanganyar.png" alt="Logo Karanganyar" style="width:34px; height:34px; object-fit:contain; mix-blend-mode:multiply;" class="logo-karanganyar-img">
         </div>
         <div>
           <strong style="font-size:1.1rem; display:block; line-height:1.1;">DESA JATIHARJO</strong>
@@ -72,7 +72,7 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
         <span style="font-size:0.9rem; font-weight:600; color:var(--text-muted); display:none; @media(min-width:600px){display:inline;}">
           Halo, <strong style="color:var(--text-main);"><?= $username ?></strong>
         </span>
-        <a href="../index.html" target="_blank" class="btn-sm" style="background:var(--bg-alt); color:var(--text-main); border:1px solid var(--border-color);">
+        <a href="/index.html" target="_blank" class="btn-sm" style="background:var(--bg-alt); color:var(--text-main); border:1px solid var(--border-color);">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
           Lihat Website
         </a>
@@ -318,7 +318,7 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
           <input type="file" id="product-image-file" name="image_file" class="form-input" accept="image/png, image/jpeg, image/webp" onchange="handleImagePreview(this)">
           
           <div class="image-preview-box">
-            <img id="preview-img" src="../assets/images/umkm.png" alt="Preview Gambar">
+            <img id="preview-img" src="/assets/images/umkm.png" alt="Preview Gambar">
           </div>
         </div>
 
@@ -334,6 +334,6 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
     </div>
   </div>
 
-  <script src="admin.js?v=<?= time() ?>"></script>
+  <script src="/admin/admin.js?v=<?= time() ?>"></script>
 </body>
 </html>
