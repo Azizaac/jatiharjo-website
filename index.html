@@ -18,6 +18,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet" fetchpriority="high">
   
+  <!-- Preconnect to Supabase -->
+  <link rel="preconnect" href="https://enyfkkhyejegsyjtqywj.supabase.co" crossorigin>
+
   <!-- Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -300,7 +303,7 @@
 
         <div class="feature-img-box">
           <!-- ganti dengan foto asli desa -->
-          <img src="assets/images/peternakan.png" alt="Peternakan Sapi Simmental Desa Jatiharjo" class="feature-img">
+          <img src="assets/images/peternakan.png" alt="Peternakan Sapi Simmental Desa Jatiharjo" class="feature-img" loading="lazy">
           <div class="feature-badge-floating" style="bottom:1.5rem; left:auto; right:1.5rem;">
             <div style="font-size:0.8rem; font-weight:700; color:var(--primary-blue);">KUALITAS TERJAGA</div>
             <div style="font-size:1.1rem; font-weight:800;">Pengawasan Dokter Hewan</div>
@@ -333,124 +336,9 @@
       <!-- UMKM Cards Grid -->
       <div class="umkm-grid" id="umkm-grid-container">
         
-        <!-- Product 1 -->
-        <div class="umkm-card" data-category="hasil-bumi">
-          <div class="umkm-img-wrapper">
-            <!-- ganti dengan foto asli desa -->
-            <img src="assets/images/umkm.png" alt="Beras Mentik Wangi Premium" class="umkm-img">
-            <span class="umkm-category-badge">Hasil Bumi</span>
-          </div>
-          <div class="umkm-body">
-            <div class="umkm-owner">Kelompok Tani Tani Makmur</div>
-            <h3 class="umkm-title">Beras Mentik Wangi Premium 5kg</h3>
-            <p class="umkm-desc">Beras asli panen sawah Jatiharjo. Aroma wangi alami, bertekstur pulen, bebas pemutih dan pestisida berbahaya.</p>
-            <div class="umkm-footer">
-              <span class="umkm-price">Rp 75.000 / 5kg</span>
-              <button onclick="openProductModal('Beras Mentik Wangi Premium 5kg', 'Kelompok Tani Tani Makmur', 'Hasil Bumi', 'Beras asli panen sawah Jatiharjo. Aroma wangi alami, bertekstur pulen, bebas pemutih dan pestisida berbahaya.', 'Rp 75.000 / 5kg', 'assets/images/umkm.png', '6281234567890')" class="btn-wa-order">
-                Detail / Pesan
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product 2 -->
-        <div class="umkm-card" data-category="makanan">
-          <div class="umkm-img-wrapper">
-            <!-- ganti dengan foto asli desa -->
-            <img src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=800&auto=format&fit=crop" alt="Keripik Pisang Renyah Jatiharjo" class="umkm-img">
-            <span class="umkm-category-badge">Olahan Pangan</span>
-          </div>
-          <div class="umkm-body">
-            <div class="umkm-owner">UMKM Ibu Lestari</div>
-            <h3 class="umkm-title">Keripik Pisang Renyah Aneka Rasa</h3>
-            <p class="umkm-desc">Dibuat dari pisang kepok pilihan hasil kebun desa. Irisan tipis renyah dengan varian manis karamel, cokelat & asin gurih.</p>
-            <div class="umkm-footer">
-              <span class="umkm-price">Rp 15.000 / pack</span>
-              <button onclick="openProductModal('Keripik Pisang Renyah Aneka Rasa', 'UMKM Ibu Lestari', 'Olahan Pangan', 'Dibuat dari pisang kepok pilihan hasil kebun desa. Irisan tipis renyah dengan varian manis karamel, cokelat & asin gurih.', 'Rp 15.000 / pack', 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=800&auto=format&fit=crop', '6281234567890')" class="btn-wa-order">
-                Detail / Pesan
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product 3 -->
-        <div class="umkm-card" data-category="hasil-bumi">
-          <div class="umkm-img-wrapper">
-            <!-- ganti dengan foto asli desa -->
-            <img src="assets/images/peternakan.png" alt="Pupuk Organik Sapi Super 25kg" class="umkm-img">
-            <span class="umkm-category-badge">Hasil Bumi</span>
-          </div>
-          <div class="umkm-body">
-            <div class="umkm-owner">Kelompok Ternak Lembu Sejahtera</div>
-            <h3 class="umkm-title">Pupuk Organik Kompos Sapi 25kg</h3>
-            <p class="umkm-desc">Pupuk kompos olahan kotoran sapi fermentasi matang. Sangat kaya hara untuk menyuburkan tanaman buah, sayur & bunga.</p>
-            <div class="umkm-footer">
-              <span class="umkm-price">Rp 30.000 / karung</span>
-              <button onclick="openProductModal('Pupuk Organik Kompos Sapi 25kg', 'Kelompok Ternak Lembu Sejahtera', 'Hasil Bumi', 'Pupuk kompos olahan kotoran sapi fermentasi matang. Sangat kaya hara untuk menyuburkan tanaman buah, sayur & bunga.', 'Rp 30.000 / karung', 'assets/images/peternakan.png', '6281234567890')" class="btn-wa-order">
-                Detail / Pesan
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product 4 -->
-        <div class="umkm-card" data-category="makanan">
-          <div class="umkm-img-wrapper">
-            <!-- ganti dengan foto asli desa -->
-            <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=800&auto=format&fit=crop" alt="Gula Jawa Kelapa Asli" class="umkm-img">
-            <span class="umkm-category-badge">Olahan Pangan</span>
-          </div>
-          <div class="umkm-body">
-            <div class="umkm-owner">UMKM Pak Mulyono</div>
-            <h3 class="umkm-title">Gula Jawa / Gula Kelapa Murni 1kg</h3>
-            <p class="umkm-desc">Gula kelapa cetak tradisional dari nira murni tanpa campuran gula pasir atau bahan kimia. Legit dan beraroma harum alami.</p>
-            <div class="umkm-footer">
-              <span class="umkm-price">Rp 22.000 / kg</span>
-              <button onclick="openProductModal('Gula Jawa / Gula Kelapa Murni 1kg', 'UMKM Pak Mulyono', 'Olahan Pangan', 'Gula kelapa cetak tradisional dari nira murni tanpa campuran gula pasir atau bahan kimia. Legit dan beraroma harum alami.', 'Rp 22.000 / kg', 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=800&auto=format&fit=crop', '6281234567890')" class="btn-wa-order">
-                Detail / Pesan
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product 5 -->
-        <div class="umkm-card" data-category="kerajinan">
-          <div class="umkm-img-wrapper">
-            <!-- ganti dengan foto asli desa -->
-            <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop" alt="Anyaman Bambu Tradisional" class="umkm-img">
-            <span class="umkm-category-badge">Kerajinan</span>
-          </div>
-          <div class="umkm-body">
-            <div class="umkm-owner">Sanggar Bambu Jatiharjo</div>
-            <h3 class="umkm-title">Keranjang & Tampah Anyaman Bambu</h3>
-            <p class="umkm-desc">Kerajinan anyaman bambu halus serbaguna untuk wadah saji, dekorasi etnik rumah, dan tempat belanja ramah lingkungan.</p>
-            <div class="umkm-footer">
-              <span class="umkm-price">Rp 35.000 / unit</span>
-              <button onclick="openProductModal('Keranjang & Tampah Anyaman Bambu', 'Sanggar Bambu Jatiharjo', 'Kerajinan', 'Kerajinan anyaman bambu halus serbaguna untuk wadah saji, dekorasi etnik rumah, dan tempat belanja ramah lingkungan.', 'Rp 35.000 / unit', 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop', '6281234567890')" class="btn-wa-order">
-                Detail / Pesan
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product 6 -->
-        <div class="umkm-card" data-category="makanan">
-          <div class="umkm-img-wrapper">
-            <!-- ganti dengan foto asli desa -->
-            <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=800&auto=format&fit=crop" alt="Emping Garut Tradisional" class="umkm-img">
-            <span class="umkm-category-badge">Olahan Pangan</span>
-          </div>
-          <div class="umkm-body">
-            <div class="umkm-owner">UMKM Berkah Bersama</div>
-            <h3 class="umkm-title">Emping Garut & Kerupuk Desa 250g</h3>
-            <p class="umkm-desc">Olahan emping dari umbi garut lokal yang kaya serat dan baik untuk kesehatan pencernaan. Gurih renyah tanpa bahan pengawet.</p>
-            <div class="umkm-footer">
-              <span class="umkm-price">Rp 18.000 / pack</span>
-              <button onclick="openProductModal('Emping Garut & Kerupuk Desa 250g', 'UMKM Berkah Bersama', 'Olahan Pangan', 'Olahan emping dari umbi garut lokal yang kaya serat dan baik untuk kesehatan pencernaan. Gurih renyah tanpa bahan pengawet.', 'Rp 18.000 / pack', 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=800&auto=format&fit=crop', '6281234567890')" class="btn-wa-order">
-                Detail / Pesan
-              </button>
-            </div>
-          </div>
+        <!-- Skeleton Loader (Mencegah blocking LCP dan menghemat bandwidth 3MB) -->
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-muted);">
+          Memuat Katalog Produk UMKM...
         </div>
 
       </div>
@@ -483,7 +371,7 @@
       <div class="gallery-grid">
         <div class="gallery-item">
           <!-- ganti dengan foto asli desa -->
-          <img src="assets/images/hero.png" alt="Sawah Terasering Jatipuro">
+          <img src="assets/images/hero.png" alt="Sawah Terasering Jatipuro" loading="lazy">
           <div class="gallery-overlay">
             <h4 style="font-size:1.1rem; font-weight:700; color:#fff;">Sawah Terasering Pagi Hari</h4>
             <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Pemandangan hijau segar lereng Lawu</p>
@@ -492,7 +380,7 @@
 
         <div class="gallery-item">
           <!-- foto petani desa -->
-          <img src="assets/images/pertanian.jpg" alt="Petani Memanen Gabah Jatiharjo">
+          <img src="assets/images/pertanian.jpg" alt="Petani Memanen Gabah Jatiharjo" loading="lazy">
           <div class="gallery-overlay">
             <h4 style="font-size:1.1rem; font-weight:700; color:#fff;">Kegiatan Panen Raya Padi</h4>
             <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Gotong royong warga memanen gabah</p>
@@ -501,7 +389,7 @@
 
         <div class="gallery-item">
           <!-- ganti dengan foto asli desa -->
-          <img src="assets/images/peternakan.png" alt="Peternakan Sapi Sehat">
+          <img src="assets/images/peternakan.png" alt="Peternakan Sapi Sehat" loading="lazy">
           <div class="gallery-overlay">
             <h4 style="font-size:1.1rem; font-weight:700; color:#fff;">Kandang Sapi Komunal</h4>
             <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Pemeliharaan sapi Simmental unggul</p>
@@ -510,7 +398,7 @@
 
         <div class="gallery-item">
           <!-- ganti dengan foto asli desa -->
-          <img src="assets/images/umkm.png" alt="Produk UMKM Jatiharjo">
+          <img src="assets/images/umkm.png" alt="Produk UMKM Jatiharjo" loading="lazy">
           <div class="gallery-overlay">
             <h4 style="font-size:1.1rem; font-weight:700; color:#fff;">Hasil Bumi & Produk UMKM</h4>
             <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Produk olahan warga bernilai tambah</p>
