@@ -1,0 +1,77 @@
+{
+    "products": [
+        {
+            "id": 2,
+            "owner": "UMKM Ibu Lestari",
+            "title": "Keripik Pisang Renyah Aneka Rasa",
+            "category": "makanan",
+            "description": "Dibuat dari pisang kepok pilihan hasil kebun desa. Irisan tipis renyah dengan varian manis karamel, cokelat & asin gurih.",
+            "price": "Rp 15.000 / pack",
+            "image_path": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?q=80&w=800&auto=format&fit=crop",
+            "wa_number": "6281234567890"
+        },
+        {
+            "id": 3,
+            "owner": "Kelompok Ternak Lembu Sejahtera",
+            "title": "Pupuk Organik Kompos Sapi 25kg",
+            "category": "hasil-bumi",
+            "description": "Pupuk kompos olahan kotoran sapi fermentasi matang. Sangat kaya hara untuk menyuburkan tanaman buah, sayur & bunga.",
+            "price": "Rp 30.000 / karung",
+            "image_path": "assets/images/peternakan.png",
+            "wa_number": "6281234567890"
+        },
+        {
+            "id": 4,
+            "owner": "UMKM Pak Mulyono",
+            "title": "Gula Jawa / Gula Kelapa Murni 1kg",
+            "category": "makanan",
+            "description": "Gula kelapa cetak tradisional dari nira murni tanpa campuran gula pasir atau bahan kimia. Legit dan beraroma harum alami.",
+            "price": "Rp 22.000 / kg",
+            "image_path": "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=800&auto=format&fit=crop",
+            "wa_number": "6281234567890"
+        },
+        {
+            "id": 5,
+            "owner": "Sanggar Bambu Jatiharjo",
+            "title": "Keranjang & Tampah Anyaman Bambu",
+            "category": "kerajinan",
+            "description": "Kerajinan anyaman bambu halus serbaguna untuk wadah saji, dekorasi etnik rumah, dan tempat belanja ramah lingkungan.",
+            "price": "Rp 35.000 / unit",
+            "image_path": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop",
+            "wa_number": "6281234567890"
+        },
+        {
+            "id": 6,
+            "owner": "UMKM Berkah Bersama",
+            "title": "Emping Garut & Kerupuk Desa 250g",
+            "category": "makanan",
+            "description": "Olahan emping dari umbi garut lokal yang kaya serat dan baik untuk kesehatan pencernaan. Gurih renyah tanpa bahan pengawet.",
+            "price": "Rp 18.000 / pack",
+            "image_path": "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=800&auto=format&fit=crop",
+            "wa_number": "6281234567890"
+        },
+        {
+            "id": 7,
+            "owner": "KWT Jatiharjo",
+            "title": "Tepung Mocaf",
+            "category": "makanan",
+            "description": "tepung free gluten",
+            "price": "-",
+            "image_path": "assets/images/uploads/umkm_1785984475_959.jpeg",
+            "wa_number": "6289658579000"
+        }
+    ],
+    "settings": {
+        "stat_sawah_val": "5",
+        "stat_sawah_label": "Hektar Lahan Sawah Produktif",
+        "stat_sapi_val": "5",
+        "stat_sapi_label": "Ekor Populasi Sapi Ternak",
+        "stat_umkm_val": "5",
+        "stat_umkm_label": "UMKM Olahan & Kerajinan",
+        "stat_poktan_val": "6",
+        "stat_poktan_label": "Kelompok Tani & Ternak",
+        "wa_kelompok_ternak": "6289674185829",
+        "wa_kelompok_tani": "6289674185829",
+        "wa_daftar_umkm": "6289674185829"
+    }
+}
