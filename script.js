@@ -74,14 +74,45 @@ function applySettingsData(s) {
     if (el) el.innerText = s.stat_poktan_label;
   }
 
-  // Update Feature Images
-  if (s.img_pertanian) {
-    const el = document.getElementById('img-pertanian');
-    if (el) el.src = s.img_pertanian;
+  // Update Feature Images & Texts (JSON Data)
+  if (s.pertanian_data) {
+    try {
+      const p = JSON.parse(s.pertanian_data);
+      if (p.badge_title) document.getElementById('pertanian-badge-title').innerText = p.badge_title;
+      if (p.badge_desc) document.getElementById('pertanian-badge-desc').innerText = p.badge_desc;
+      if (p.title) document.getElementById('pertanian-title').innerText = p.title;
+      if (p.desc) document.getElementById('pertanian-desc').innerHTML = p.desc;
+      if (p.steps && p.steps.length === 3) {
+        document.getElementById('pertanian-step1-title').innerText = p.steps[0].title;
+        document.getElementById('pertanian-step1-desc').innerText = p.steps[0].desc;
+        document.getElementById('pertanian-step2-title').innerText = p.steps[1].title;
+        document.getElementById('pertanian-step2-desc').innerText = p.steps[1].desc;
+        document.getElementById('pertanian-step3-title').innerText = p.steps[2].title;
+        document.getElementById('pertanian-step3-desc').innerText = p.steps[2].desc;
+      }
+      if (p.images && p.images.length > 0) {
+        renderCarousel('pertanian', p.images);
+      }
+    } catch(e) { console.error('Error parsing pertanian data'); }
   }
-  if (s.img_peternakan) {
-    const el = document.getElementById('img-peternakan');
-    if (el) el.src = s.img_peternakan;
+
+  if (s.peternakan_data) {
+    try {
+      const pt = JSON.parse(s.peternakan_data);
+      if (pt.badge_title) document.getElementById('peternakan-badge-title').innerText = pt.badge_title;
+      if (pt.badge_desc) document.getElementById('peternakan-badge-desc').innerText = pt.badge_desc;
+      if (pt.title) document.getElementById('peternakan-title').innerText = pt.title;
+      if (pt.desc) document.getElementById('peternakan-desc').innerHTML = pt.desc;
+      if (pt.features && pt.features.length === 2) {
+        document.getElementById('peternakan-feat1-title').innerText = pt.features[0].title;
+        document.getElementById('peternakan-feat1-desc').innerText = pt.features[0].desc;
+        document.getElementById('peternakan-feat2-title').innerText = pt.features[1].title;
+        document.getElementById('peternakan-feat2-desc').innerText = pt.features[1].desc;
+      }
+      if (pt.images && pt.images.length > 0) {
+        renderCarousel('peternakan', pt.images);
+      }
+    } catch(e) { console.error('Error parsing peternakan data'); }
   }
 
   // Update WA Contact URLs
@@ -503,4 +534,41 @@ function openProductModal(p) {
 function closeModal() {
   const backdrop = document.getElementById('modal-backdrop');
   if (backdrop) backdrop.classList.remove('active');
+}
+
+// Carousel Rendering Logic
+function renderCarousel(prefix, images) {
+  const container = document.getElementById(`${prefix}-carousel-container`);
+  const dotsContainer = document.getElementById(`${prefix}-carousel-dots`);
+  if (!container || !dotsContainer) return;
+
+  container.innerHTML = '';
+  dotsContainer.innerHTML = '';
+
+  images.forEach((src, index) => {
+    // Add Slide
+    const slide = document.createElement('div');
+    slide.className = 'carousel-slide';
+    slide.innerHTML = `<img src="${src}" loading="lazy" alt="Carousel image ${index+1}">`;
+    container.appendChild(slide);
+
+    // Add Dot
+    const dot = document.createElement('div');
+    dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+    dot.addEventListener('click', () => {
+      container.scrollTo({ left: slide.offsetLeft, behavior: 'smooth' });
+    });
+    dotsContainer.appendChild(dot);
+  });
+
+  // Update dots on scroll
+  container.addEventListener('scroll', () => {
+    const slideWidth = container.clientWidth;
+    const activeIndex = Math.round(container.scrollLeft / slideWidth);
+    const dots = dotsContainer.querySelectorAll('.carousel-dot');
+    dots.forEach((dot, i) => {
+      if (i === activeIndex) dot.classList.add('active');
+      else dot.classList.remove('active');
+    });
+  });
 }

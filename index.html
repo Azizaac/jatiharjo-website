@@ -219,18 +219,25 @@
   <section id="pertanian" class="section-padding reveal" style="background:var(--bg-alt);">
     <div class="container-custom">
       <div class="feature-split">
-        <div class="feature-img-box">
-          <img id="img-pertanian" src="assets/images/pertanian.webp" alt="Petani Memanen Gabah Desa Jatiharjo" class="feature-img" loading="lazy">
+        <div class="feature-img-box carousel-wrapper" id="pertanian-carousel">
+          <div class="carousel-container" id="pertanian-carousel-container">
+            <div class="carousel-slide">
+              <img src="assets/images/pertanian.webp" alt="Petani Memanen Gabah Desa Jatiharjo" loading="lazy">
+            </div>
+          </div>
+          <div class="carousel-dots" id="pertanian-carousel-dots">
+            <div class="carousel-dot active"></div>
+          </div>
           <div class="feature-badge-floating">
-            <div style="font-size:0.8rem; font-weight:700; color:var(--primary-green);">PANEN GABAH BERKALA</div>
-            <div style="font-size:1.1rem; font-weight:800;">3 Kali Musim Tanam / Tahun</div>
+            <div id="pertanian-badge-title" style="font-size:0.8rem; font-weight:700; color:var(--primary-green);">PANEN GABAH BERKALA</div>
+            <div id="pertanian-badge-desc" style="font-size:1.1rem; font-weight:800;">3 Kali Musim Tanam / Tahun</div>
           </div>
         </div>
 
         <div>
           <span class="section-subtitle">Pilar Utama Pertanian</span>
-          <h2 class="section-title" style="margin-bottom:1.25rem;">Gabah Pilihan Berkualitas Dari Sawah Jatiharjo</h2>
-          <p class="section-description" style="margin-bottom:2rem;">
+          <h2 id="pertanian-title" class="section-title" style="margin-bottom:1.25rem;">Gabah Pilihan Berkualitas Dari Sawah Jatiharjo</h2>
+          <p id="pertanian-desc" class="section-description" style="margin-bottom:2rem;">
             Desa Jatiharjo adalah sentra produksi <strong style="color:var(--primary-green);">gabah</strong> — hasil panen langsung dari sawah yang dikelola secara turun-temurun. Dengan memanfaatkan air pegunungan jernih dan teknik pertanian berkelanjutan, kelompok tani menghasilkan gabah berkualitas tinggi, penuh butir, dan bebas pestisida berbahaya.
           </p>
 
@@ -238,24 +245,24 @@
             <div class="timeline-item">
               <div class="timeline-step">1</div>
               <div class="timeline-content">
-                <h4>Olah Lahan &amp; Pengairan Alami</h4>
-                <p>Persiapan lahan sawah menggunakan pupuk kandang sapi organik dan saluran irigasi pegunungan yang terjaga kebersihannya sepanjang musim tanam.</p>
+                <h4 id="pertanian-step1-title">Olah Lahan &amp; Pengairan Alami</h4>
+                <p id="pertanian-step1-desc">Persiapan lahan sawah menggunakan pupuk kandang sapi organik dan saluran irigasi pegunungan yang terjaga kebersihannya sepanjang musim tanam.</p>
               </div>
             </div>
 
             <div class="timeline-item">
               <div class="timeline-step">2</div>
               <div class="timeline-content">
-                <h4>Tanam Bibit Varietas Unggul</h4>
-                <p>Pemilihan benih Pandan Wangi &amp; Mentik Wangi bersertifikasi, menghasilkan gabah dengan butiran padat, bernas, dan beraroma khas lereng Gunung Lawu.</p>
+                <h4 id="pertanian-step2-title">Tanam Bibit Varietas Unggul</h4>
+                <p id="pertanian-step2-desc">Pemilihan benih Pandan Wangi &amp; Mentik Wangi bersertifikasi, menghasilkan gabah dengan butiran padat, bernas, dan beraroma khas lereng Gunung Lawu.</p>
               </div>
             </div>
 
             <div class="timeline-item">
               <div class="timeline-step">3</div>
               <div class="timeline-content">
-                <h4>Panen &amp; Pengeringan Gabah</h4>
-                <p>Gabah dipanen manual oleh petani lokal, dikeringkan di bawah sinar matahari secara tradisional hingga kadar air optimal sebelum siap dijual atau digiling.</p>
+                <h4 id="pertanian-step3-title">Panen &amp; Pengeringan Gabah</h4>
+                <p id="pertanian-step3-desc">Gabah dipanen manual oleh petani lokal, dikeringkan di bawah sinar matahari secara tradisional hingga kadar air optimal sebelum siap dijual atau digiling.</p>
               </div>
             </div>
           </div>
@@ -275,22 +282,22 @@
   <!-- ==================== PETERNAKAN SECTION ==================== -->
   <section id="peternakan" class="section-padding reveal">
     <div class="container-custom">
-      <div class="feature-split" style="direction:ltr;">
+      <div class="feature-split feature-split-reverse" style="direction:ltr;">
         <div>
           <span class="section-subtitle" style="color:var(--primary-blue);">Pilar Utama Peternakan</span>
-          <h2 class="section-title">Sentra Peternakan Sapi Sehat & Ekosistem Sirkular</h2>
-          <p class="section-description" style="margin-bottom:1.5rem;">
+          <h2 id="peternakan-title" class="section-title">Sentra Peternakan Sapi Sehat & Ekosistem Sirkular</h2>
+          <p id="peternakan-desc" class="section-description" style="margin-bottom:1.5rem;">
             Peternakan sapi di Desa Jatiharjo merupakan modal ekonomi utama warga. Dengan pola pemeliharaan komunal dan pakan rumput gajah serta legum segar, sapi tumbuh sehat dengan kualitas daging yang prime.
           </p>
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:2rem;">
             <div style="background:var(--bg-surface); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
-              <h4 style="color:var(--primary-blue); font-size:1.1rem; margin-bottom:0.35rem;">Varietas Sapi</h4>
-              <p style="font-size:0.9rem; color:var(--text-muted);">Simmental, Limosin, dan Sapi Jawa Super.</p>
+              <h4 id="peternakan-feat1-title" style="color:var(--primary-blue); font-size:1.1rem; margin-bottom:0.35rem;">Varietas Sapi</h4>
+              <p id="peternakan-feat1-desc" style="font-size:0.9rem; color:var(--text-muted);">Simmental, Limosin, dan Sapi Jawa Super.</p>
             </div>
             <div style="background:var(--bg-surface); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
-              <h4 style="color:var(--primary-blue); font-size:1.1rem; margin-bottom:0.35rem;">Integrasi Organik</h4>
-              <p style="font-size:0.9rem; color:var(--text-muted);">Kotoran diolah menjadi pupuk kompos & bio-gas.</p>
+              <h4 id="peternakan-feat2-title" style="color:var(--primary-blue); font-size:1.1rem; margin-bottom:0.35rem;">Integrasi Organik</h4>
+              <p id="peternakan-feat2-desc" style="font-size:0.9rem; color:var(--text-muted);">Kotoran diolah menjadi pupuk kompos & bio-gas.</p>
             </div>
           </div>
 
@@ -300,11 +307,18 @@
           </a>
         </div>
 
-        <div class="feature-img-box">
-          <img id="img-peternakan" src="assets/images/peternakan.webp" alt="Peternakan Sapi Simmental Desa Jatiharjo" class="feature-img" loading="lazy">
+        <div class="feature-img-box carousel-wrapper" id="peternakan-carousel">
+          <div class="carousel-container" id="peternakan-carousel-container">
+            <div class="carousel-slide">
+              <img src="assets/images/peternakan.webp" alt="Peternakan Sapi Simmental Desa Jatiharjo" loading="lazy">
+            </div>
+          </div>
+          <div class="carousel-dots" id="peternakan-carousel-dots">
+            <div class="carousel-dot active"></div>
+          </div>
           <div class="feature-badge-floating" style="bottom:1.5rem; left:auto; right:1.5rem;">
-            <div style="font-size:0.8rem; font-weight:700; color:var(--primary-blue);">KUALITAS TERJAGA</div>
-            <div style="font-size:1.1rem; font-weight:800;">Pengawasan Dokter Hewan</div>
+            <div id="peternakan-badge-title" style="font-size:0.8rem; font-weight:700; color:var(--primary-blue);">KUALITAS TERJAGA</div>
+            <div id="peternakan-badge-desc" style="font-size:1.1rem; font-weight:800;">Pengawasan Dokter Hewan</div>
           </div>
         </div>
       </div>

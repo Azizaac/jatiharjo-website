@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   loadAllData();
   initFormListeners();
-  handleFeatureImagePreview('img_pertanian_input', 'img_pertanian_preview', 'img_pertanian');
-  handleFeatureImagePreview('img_peternakan_input', 'img_peternakan_preview', 'img_peternakan');
+  handleMultiImageUpload('pertanian_images_input', 'pertanian_images_preview_container', 'pertanianNewImages');
+  handleMultiImageUpload('peternakan_images_input', 'peternakan_images_preview_container', 'peternakanNewImages');
 });
 
 /* 1. TAB NAVIGATION */
@@ -154,13 +154,48 @@ function populateSettingsForm(s) {
     document.getElementById('wa_kelompok_tani').value = s.wa_kelompok_tani || '6281234567890';
     document.getElementById('wa_daftar_umkm').value = s.wa_daftar_umkm || '6281234567890';
     
-    if (s.img_pertanian) {
-      document.getElementById('img_pertanian_preview').src = s.img_pertanian;
-      document.getElementById('img_pertanian').value = s.img_pertanian;
+    // Pertanian Data
+    if (s.pertanian_data) {
+      try {
+        const pData = JSON.parse(s.pertanian_data);
+        document.getElementById('pertanian_badge_title').value = pData.badge_title || '';
+        document.getElementById('pertanian_badge_desc').value = pData.badge_desc || '';
+        document.getElementById('pertanian_title').value = pData.title || '';
+        document.getElementById('pertanian_desc').value = pData.desc || '';
+        if (pData.steps && pData.steps.length === 3) {
+          document.getElementById('pertanian_step1_title').value = pData.steps[0].title || '';
+          document.getElementById('pertanian_step1_desc').value = pData.steps[0].desc || '';
+          document.getElementById('pertanian_step2_title').value = pData.steps[1].title || '';
+          document.getElementById('pertanian_step2_desc').value = pData.steps[1].desc || '';
+          document.getElementById('pertanian_step3_title').value = pData.steps[2].title || '';
+          document.getElementById('pertanian_step3_desc').value = pData.steps[2].desc || '';
+        }
+        if (pData.images && pData.images.length > 0) {
+          window.pertanianStoredImages = pData.images;
+          renderMultiImagePreview('pertanian_images_preview_container', pData.images);
+        }
+      } catch(e) { console.error("Error parsing pertanian_data"); }
     }
-    if (s.img_peternakan) {
-      document.getElementById('img_peternakan_preview').src = s.img_peternakan;
-      document.getElementById('img_peternakan').value = s.img_peternakan;
+
+    // Peternakan Data
+    if (s.peternakan_data) {
+      try {
+        const ptData = JSON.parse(s.peternakan_data);
+        document.getElementById('peternakan_badge_title').value = ptData.badge_title || '';
+        document.getElementById('peternakan_badge_desc').value = ptData.badge_desc || '';
+        document.getElementById('peternakan_title').value = ptData.title || '';
+        document.getElementById('peternakan_desc').value = ptData.desc || '';
+        if (ptData.features && ptData.features.length === 2) {
+          document.getElementById('peternakan_feat1_title').value = ptData.features[0].title || '';
+          document.getElementById('peternakan_feat1_desc').value = ptData.features[0].desc || '';
+          document.getElementById('peternakan_feat2_title').value = ptData.features[1].title || '';
+          document.getElementById('peternakan_feat2_desc').value = ptData.features[1].desc || '';
+        }
+        if (ptData.images && ptData.images.length > 0) {
+          window.peternakanStoredImages = ptData.images;
+          renderMultiImagePreview('peternakan_images_preview_container', ptData.images);
+        }
+      } catch(e) { console.error("Error parsing peternakan_data"); }
     }
   }
 }
@@ -244,42 +279,82 @@ function handleImagePreview(input) {
   }
 }
 
-function handleFeatureImagePreview(inputId, previewId, hiddenInputId) {
+function handleMultiImageUpload(inputId, containerId, globalVarName) {
   const input = document.getElementById(inputId);
   if (!input) return;
-  input.addEventListener('change', function() {
-    if (this.files && this.files[0]) {
-      const file = this.files[0];
-      if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
-        Swal.fire('Format Tidak Didukung', 'Hanya diperbolehkan format gambar JPG, PNG, dan WEBP.', 'warning');
-        this.value = '';
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const MAX_WIDTH = 1200;
-          let width = img.width;
-          let height = img.height;
-          if (width > MAX_WIDTH) {
-            height = Math.round((height * MAX_WIDTH) / width);
-            width = MAX_WIDTH;
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          const dataUrl = canvas.toDataURL('image/webp', 0.8);
-          document.getElementById(previewId).src = dataUrl;
-          document.getElementById(hiddenInputId).value = dataUrl;
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+  
+  input.addEventListener('change', async function() {
+    if (!this.files || this.files.length === 0) return;
+    
+    if (this.files.length > 3) {
+      Swal.fire('Maksimal 3 Gambar', 'Anda hanya dapat mengunggah maksimal 3 gambar.', 'warning');
+      this.value = '';
+      return;
     }
+
+    let processedImages = [];
+    let hasError = false;
+
+    for (let i = 0; i < this.files.length; i++) {
+      const file = this.files[i];
+      if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+        hasError = true;
+        continue;
+      }
+
+      const dataUrl = await compressImageToWebP(file);
+      processedImages.push(dataUrl);
+    }
+
+    if (hasError) {
+      Swal.fire('Format Tidak Didukung', 'Beberapa file diabaikan karena format tidak didukung (harus JPG/PNG/WEBP).', 'warning');
+    }
+
+    window[globalVarName] = processedImages;
+    renderMultiImagePreview(containerId, processedImages);
+  });
+}
+
+function compressImageToWebP(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const MAX_WIDTH = 1200;
+        let width = img.width;
+        let height = img.height;
+        if (width > MAX_WIDTH) {
+          height = Math.round((height * MAX_WIDTH) / width);
+          width = MAX_WIDTH;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/webp', 0.8));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderMultiImagePreview(containerId, imagesArray) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  
+  imagesArray.forEach(src => {
+    const box = document.createElement('div');
+    box.style.width = '120px';
+    box.style.height = '90px';
+    box.style.borderRadius = '6px';
+    box.style.overflow = 'hidden';
+    box.style.border = '1px solid var(--border-color)';
+    box.innerHTML = `<img src="${src}" style="width:100%; height:100%; object-fit:cover;" alt="preview">`;
+    container.appendChild(box);
   });
 }
 
@@ -378,32 +453,68 @@ function initFormListeners() {
     });
   }
 
-  // Images Form
-  const imagesForm = document.getElementById('images-form');
-  if (imagesForm) {
-    imagesForm.addEventListener('submit', async (e) => {
+  // Pertanian Form
+  const pertanianForm = document.getElementById('pertanian-form');
+  if (pertanianForm) {
+    pertanianForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const formData = new FormData(imagesForm);
+      
+      const payload = {
+        badge_title: document.getElementById('pertanian_badge_title').value,
+        badge_desc: document.getElementById('pertanian_badge_desc').value,
+        title: document.getElementById('pertanian_title').value,
+        desc: document.getElementById('pertanian_desc').value,
+        steps: [
+          { title: document.getElementById('pertanian_step1_title').value, desc: document.getElementById('pertanian_step1_desc').value },
+          { title: document.getElementById('pertanian_step2_title').value, desc: document.getElementById('pertanian_step2_desc').value },
+          { title: document.getElementById('pertanian_step3_title').value, desc: document.getElementById('pertanian_step3_desc').value }
+        ],
+        images: window.pertanianNewImages || window.pertanianStoredImages || []
+      };
+
+      const formData = new FormData();
       formData.set('action', 'save_settings');
       formData.set('csrf_token', getCsrfToken());
+      formData.set('pertanian_data', JSON.stringify(payload));
 
       try {
-        const res = await fetch('/save.php', {
-          method: 'POST',
-          body: formData,
-          credentials: 'same-origin'
-        });
+        const res = await fetch('/save.php', { method: 'POST', body: formData, credentials: 'same-origin' });
         const data = await res.json();
+        if (data.success) { showAdminToast('Konten Pilar Pertanian berhasil diperbarui!'); loadAllData(); }
+        else { showAdminToast(data.error || 'Terjadi kesalahan', true); }
+      } catch (err) { showAdminToast('Gagal terhubung ke server save.php.', true); }
+    });
+  }
 
-        if (data.success) {
-          showAdminToast(data.message || 'Gambar fitur berhasil diperbarui!');
-          loadAllData();
-        } else {
-          showAdminToast(data.error || 'Terjadi kesalahan', true);
-        }
-      } catch (err) {
-        showAdminToast('Gagal terhubung ke server save.php.', true);
-      }
+  // Peternakan Form
+  const peternakanForm = document.getElementById('peternakan-form');
+  if (peternakanForm) {
+    peternakanForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const payload = {
+        badge_title: document.getElementById('peternakan_badge_title').value,
+        badge_desc: document.getElementById('peternakan_badge_desc').value,
+        title: document.getElementById('peternakan_title').value,
+        desc: document.getElementById('peternakan_desc').value,
+        features: [
+          { title: document.getElementById('peternakan_feat1_title').value, desc: document.getElementById('peternakan_feat1_desc').value },
+          { title: document.getElementById('peternakan_feat2_title').value, desc: document.getElementById('peternakan_feat2_desc').value }
+        ],
+        images: window.peternakanNewImages || window.peternakanStoredImages || []
+      };
+
+      const formData = new FormData();
+      formData.set('action', 'save_settings');
+      formData.set('csrf_token', getCsrfToken());
+      formData.set('peternakan_data', JSON.stringify(payload));
+
+      try {
+        const res = await fetch('/save.php', { method: 'POST', body: formData, credentials: 'same-origin' });
+        const data = await res.json();
+        if (data.success) { showAdminToast('Konten Pilar Peternakan berhasil diperbarui!'); loadAllData(); }
+        else { showAdminToast(data.error || 'Terjadi kesalahan', true); }
+      } catch (err) { showAdminToast('Gagal terhubung ke server save.php.', true); }
     });
   }
 }

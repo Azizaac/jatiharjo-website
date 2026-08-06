@@ -247,7 +247,7 @@ try {
         $allowedNumericKeys = ['stat_sawah_val', 'stat_sapi_val', 'stat_umkm_val', 'stat_poktan_val'];
         $allowedTextKeys = ['stat_sawah_label', 'stat_sapi_label', 'stat_umkm_label', 'stat_poktan_label'];
         $allowedWaKeys = ['wa_kelompok_ternak', 'wa_kelompok_tani', 'wa_daftar_umkm'];
-        $allowedBase64Keys = ['img_pertanian', 'img_peternakan'];
+        $allowedJsonKeys = ['pertanian_data', 'peternakan_data'];
 
         $payloads = [];
 
@@ -270,12 +270,11 @@ try {
                 $payloads[] = ['key' => $k, 'value' => $val];
             }
         }
-        foreach ($allowedBase64Keys as $k) {
+        foreach ($allowedJsonKeys as $k) {
             if (isset($_POST[$k])) {
-                // Jangan sanitize text untuk base64 image (karena sangat panjang dan butuh format asli)
-                // Hanya pastikan string tersebut dimulai dengan "data:image/"
+                // Ensure it is a valid JSON string before saving
                 $val = trim($_POST[$k]);
-                if (strpos($val, 'data:image/') === 0) {
+                if (!empty($val) && json_decode($val) !== null) {
                     $payloads[] = ['key' => $k, 'value' => $val];
                 }
             }

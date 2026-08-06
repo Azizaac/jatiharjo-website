@@ -100,7 +100,8 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
       <button class="tab-btn active" data-tab="umkm">🛍️ Katalog UMKM</button>
       <button class="tab-btn" data-tab="stats">📊 Statistik Desa</button>
       <button class="tab-btn" data-tab="contacts">📞 Kontak & Narahubung WA</button>
-      <button class="tab-btn" data-tab="images">🖼️ Gambar Fitur</button>
+      <button class="tab-btn" data-tab="pertanian">🌾 Pilar Pertanian</button>
+      <button class="tab-btn" data-tab="peternakan">🐄 Pilar Peternakan</button>
     </div>
 
     <!-- ================= TAB 1: KATALOG UMKM ================= -->
@@ -259,48 +260,67 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
       </div>
     </div>
 
-    <!-- ================= TAB 4: GAMBAR FITUR ================= -->
-    <div id="tab-images" class="tab-content">
+    <!-- ================= TAB 4: PILAR PERTANIAN ================= -->
+    <div id="tab-pertanian" class="tab-content">
       <div class="admin-card">
-        <h3 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem;">Edit Gambar Fitur (Pertanian & Peternakan)</h3>
+        <h3 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem;">Edit Konten Pilar Pertanian</h3>
         <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:2rem;">
-          Unggah gambar baru untuk mengganti gambar pada halaman utama. Gambar akan otomatis dikompres ke format WebP oleh sistem agar performa website tetap super cepat (PageSpeed 99).
+          Ubah judul, teks, dan unggah hingga 3 gambar (carousel) untuk bagian Pertanian.
         </p>
 
-        <form id="images-form">
+        <form id="pertanian-form">
           <div style="display:flex; flex-direction:column; gap:1.5rem;">
             
-            <!-- Image 1: Pertanian -->
-            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap;">
-              <div style="flex: 1; min-width: 250px;">
-                <label class="form-label" style="font-size:1rem; font-weight:700; color:var(--primary-green);">
-                  1. Gambar Pilar Utama Pertanian
-                </label>
-                <span style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:0.75rem;">
-                  Mengganti gambar ladang padi di bagian "Gabah Pilihan Berkualitas".
-                </span>
-                <input type="file" id="img_pertanian_input" accept="image/jpeg, image/png, image/webp" class="form-input">
-                <input type="hidden" id="img_pertanian" name="img_pertanian">
-              </div>
-              <div style="width:160px; height:120px; border-radius:8px; overflow:hidden; border:2px dashed var(--border-color); display:flex; align-items:center; justify-content:center; background:#f9fafb;">
-                <img id="img_pertanian_preview" src="/assets/images/pertanian.webp" style="width:100%; height:100%; object-fit:cover;" alt="Preview">
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <label class="form-label">Judul Badge Pertanian</label>
+              <input type="text" id="pertanian_badge_title" name="pertanian_badge_title" class="form-input" placeholder="PANEN GABAH BERKALA" required>
+              
+              <label class="form-label" style="margin-top:1rem;">Deskripsi Badge Pertanian</label>
+              <input type="text" id="pertanian_badge_desc" name="pertanian_badge_desc" class="form-input" placeholder="3 Kali Musim Tanam / Tahun" required>
+            </div>
+
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <label class="form-label">Judul Utama Pilar</label>
+              <input type="text" id="pertanian_title" name="pertanian_title" class="form-input" placeholder="Gabah Pilihan Berkualitas Dari Sawah Jatiharjo" required>
+              
+              <label class="form-label" style="margin-top:1rem;">Deskripsi Singkat</label>
+              <textarea id="pertanian_desc" name="pertanian_desc" class="form-input" style="height:100px;" required placeholder="Desa Jatiharjo adalah sentra produksi..."></textarea>
+            </div>
+
+            <!-- Langkah-Langkah -->
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <h4 style="margin-bottom:1rem;">Langkah Proses Panen (3 Langkah)</h4>
+              <div style="display:grid; gap:1rem;">
+                <div>
+                  <label class="form-label" style="font-size:0.85rem;">1. Judul Langkah Pertama</label>
+                  <input type="text" id="pertanian_step1_title" name="pertanian_step1_title" class="form-input" placeholder="Olah Lahan & Pengairan Alami" required>
+                  <input type="text" id="pertanian_step1_desc" name="pertanian_step1_desc" class="form-input" style="margin-top:0.5rem;" placeholder="Persiapan lahan sawah..." required>
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.85rem;">2. Judul Langkah Kedua</label>
+                  <input type="text" id="pertanian_step2_title" name="pertanian_step2_title" class="form-input" placeholder="Tanam Bibit Varietas Unggul" required>
+                  <input type="text" id="pertanian_step2_desc" name="pertanian_step2_desc" class="form-input" style="margin-top:0.5rem;" placeholder="Pemilihan benih..." required>
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.85rem;">3. Judul Langkah Ketiga</label>
+                  <input type="text" id="pertanian_step3_title" name="pertanian_step3_title" class="form-input" placeholder="Panen & Pengeringan Gabah" required>
+                  <input type="text" id="pertanian_step3_desc" name="pertanian_step3_desc" class="form-input" style="margin-top:0.5rem;" placeholder="Gabah dipanen manual..." required>
+                </div>
               </div>
             </div>
 
-            <!-- Image 2: Peternakan -->
-            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap;">
-              <div style="flex: 1; min-width: 250px;">
-                <label class="form-label" style="font-size:1rem; font-weight:700; color:var(--primary-blue);">
-                  2. Gambar Pilar Utama Peternakan
-                </label>
-                <span style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:0.75rem;">
-                  Mengganti gambar kandang sapi di bagian "Sentra Peternakan Sapi Sehat".
-                </span>
-                <input type="file" id="img_peternakan_input" accept="image/jpeg, image/png, image/webp" class="form-input">
-                <input type="hidden" id="img_peternakan" name="img_peternakan">
-              </div>
-              <div style="width:160px; height:120px; border-radius:8px; overflow:hidden; border:2px dashed var(--border-color); display:flex; align-items:center; justify-content:center; background:#f9fafb;">
-                <img id="img_peternakan_preview" src="/assets/images/peternakan.webp" style="width:100%; height:100%; object-fit:cover;" alt="Preview">
+            <!-- Carousel Images -->
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <label class="form-label" style="font-size:1rem; font-weight:700; color:var(--primary-green);">
+                Upload Gambar Carousel (Maks 3 Gambar)
+              </label>
+              <span style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:1rem;">
+                Pilih hingga 3 gambar sekaligus. Jika tidak ada yang dipilih, gambar lama akan dipertahankan.
+              </span>
+              <input type="file" id="pertanian_images_input" accept="image/jpeg, image/png, image/webp" class="form-input" multiple>
+              
+              <div id="pertanian_images_preview_container" style="display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap;">
+                <!-- Previews injected via JS -->
               </div>
             </div>
 
@@ -308,7 +328,77 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
 
           <div style="margin-top:2rem; text-align:right;">
             <button type="submit" class="btn-primary" style="padding:0.85rem 2rem;">
-              Simpan Perubahan Gambar
+              Simpan Konten Pertanian
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= TAB 5: PILAR PETERNAKAN ================= -->
+    <div id="tab-peternakan" class="tab-content">
+      <div class="admin-card">
+        <h3 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem;">Edit Konten Pilar Peternakan</h3>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:2rem;">
+          Ubah judul, teks, dan unggah hingga 3 gambar (carousel) untuk bagian Peternakan.
+        </p>
+
+        <form id="peternakan-form">
+          <div style="display:flex; flex-direction:column; gap:1.5rem;">
+            
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <label class="form-label">Judul Badge Peternakan</label>
+              <input type="text" id="peternakan_badge_title" name="peternakan_badge_title" class="form-input" placeholder="KUALITAS TERJAGA" required>
+              
+              <label class="form-label" style="margin-top:1rem;">Deskripsi Badge Peternakan</label>
+              <input type="text" id="peternakan_badge_desc" name="peternakan_badge_desc" class="form-input" placeholder="Pengawasan Dokter Hewan" required>
+            </div>
+
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <label class="form-label">Judul Utama Pilar</label>
+              <input type="text" id="peternakan_title" name="peternakan_title" class="form-input" placeholder="Sentra Peternakan Sapi Sehat & Ekosistem Sirkular" required>
+              
+              <label class="form-label" style="margin-top:1rem;">Deskripsi Singkat</label>
+              <textarea id="peternakan_desc" name="peternakan_desc" class="form-input" style="height:100px;" required placeholder="Peternakan sapi di Desa Jatiharjo..."></textarea>
+            </div>
+
+            <!-- Fitur Tambahan -->
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <h4 style="margin-bottom:1rem;">Fitur Kotak Tambahan (2 Kotak)</h4>
+              <div style="display:grid; gap:1rem;">
+                <div>
+                  <label class="form-label" style="font-size:0.85rem;">1. Judul Kotak Pertama</label>
+                  <input type="text" id="peternakan_feat1_title" name="peternakan_feat1_title" class="form-input" placeholder="Varietas Sapi" required>
+                  <input type="text" id="peternakan_feat1_desc" name="peternakan_feat1_desc" class="form-input" style="margin-top:0.5rem;" placeholder="Simmental, Limosin, dan Sapi Jawa Super." required>
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.85rem;">2. Judul Kotak Kedua</label>
+                  <input type="text" id="peternakan_feat2_title" name="peternakan_feat2_title" class="form-input" placeholder="Integrasi Organik" required>
+                  <input type="text" id="peternakan_feat2_desc" name="peternakan_feat2_desc" class="form-input" style="margin-top:0.5rem;" placeholder="Kotoran diolah menjadi pupuk kompos & bio-gas." required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Carousel Images -->
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+              <label class="form-label" style="font-size:1rem; font-weight:700; color:var(--primary-blue);">
+                Upload Gambar Carousel (Maks 3 Gambar)
+              </label>
+              <span style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:1rem;">
+                Pilih hingga 3 gambar sekaligus. Jika tidak ada yang dipilih, gambar lama akan dipertahankan.
+              </span>
+              <input type="file" id="peternakan_images_input" accept="image/jpeg, image/png, image/webp" class="form-input" multiple>
+              
+              <div id="peternakan_images_preview_container" style="display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap;">
+                <!-- Previews injected via JS -->
+              </div>
+            </div>
+
+          </div>
+
+          <div style="margin-top:2rem; text-align:right;">
+            <button type="submit" class="btn-primary" style="padding:0.85rem 2rem;">
+              Simpan Konten Peternakan
             </button>
           </div>
         </form>
