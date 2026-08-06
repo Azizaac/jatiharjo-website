@@ -542,6 +542,10 @@ function renderCarousel(prefix, images) {
   const dotsContainer = document.getElementById(`${prefix}-carousel-dots`);
   if (!container || !dotsContainer) return;
 
+  if (container._autoplayTimer) {
+    clearInterval(container._autoplayTimer);
+  }
+
   container.innerHTML = '';
   dotsContainer.innerHTML = '';
 
@@ -564,6 +568,7 @@ function renderCarousel(prefix, images) {
   // Update dots on scroll
   container.addEventListener('scroll', () => {
     const slideWidth = container.clientWidth;
+    if (slideWidth === 0) return;
     const activeIndex = Math.round(container.scrollLeft / slideWidth);
     const dots = dotsContainer.querySelectorAll('.carousel-dot');
     dots.forEach((dot, i) => {
@@ -571,4 +576,31 @@ function renderCarousel(prefix, images) {
       else dot.classList.remove('active');
     });
   });
+
+  // Auto-play / Moving carousel logic (if > 1 image)
+  if (images.length > 1) {
+    let currentIndex = 0;
+    const startAutoplay = () => {
+      if (container._autoplayTimer) clearInterval(container._autoplayTimer);
+      container._autoplayTimer = setInterval(() => {
+        const slideWidth = container.clientWidth;
+        if (slideWidth === 0) return;
+        currentIndex = (Math.round(container.scrollLeft / slideWidth) + 1) % images.length;
+        container.scrollTo({ left: currentIndex * slideWidth, behavior: 'smooth' });
+      }, 4000);
+    };
+
+    const stopAutoplay = () => {
+      if (container._autoplayTimer) clearInterval(container._autoplayTimer);
+    };
+
+    startAutoplay();
+
+    // Pause on hover or touch
+    const wrapper = container.closest('.carousel-wrapper') || container;
+    wrapper.addEventListener('mouseenter', stopAutoplay);
+    wrapper.addEventListener('mouseleave', startAutoplay);
+    wrapper.addEventListener('touchstart', stopAutoplay, { passive: true });
+    wrapper.addEventListener('touchend', startAutoplay, { passive: true });
+  }
 }
