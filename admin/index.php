@@ -100,6 +100,7 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
       <button class="tab-btn active" data-tab="umkm">🛍️ Katalog UMKM</button>
       <button class="tab-btn" data-tab="stats">📊 Statistik Desa</button>
       <button class="tab-btn" data-tab="contacts">📞 Kontak & Narahubung WA</button>
+      <button class="tab-btn" data-tab="images">🖼️ Gambar Fitur</button>
     </div>
 
     <!-- ================= TAB 1: KATALOG UMKM ================= -->
@@ -252,6 +253,62 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
           <div style="margin-top:2rem; text-align:right;">
             <button type="submit" class="btn-primary" style="padding:0.85rem 2rem;">
               Simpan Perubahan Nomor WhatsApp
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= TAB 4: GAMBAR FITUR ================= -->
+    <div id="tab-images" class="tab-content">
+      <div class="admin-card">
+        <h3 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem;">Edit Gambar Fitur (Pertanian & Peternakan)</h3>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:2rem;">
+          Unggah gambar baru untuk mengganti gambar pada halaman utama. Gambar akan otomatis dikompres ke format WebP oleh sistem agar performa website tetap super cepat (PageSpeed 99).
+        </p>
+
+        <form id="images-form">
+          <div style="display:flex; flex-direction:column; gap:1.5rem;">
+            
+            <!-- Image 1: Pertanian -->
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap;">
+              <div style="flex: 1; min-width: 250px;">
+                <label class="form-label" style="font-size:1rem; font-weight:700; color:var(--primary-green);">
+                  1. Gambar Pilar Utama Pertanian
+                </label>
+                <span style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:0.75rem;">
+                  Mengganti gambar ladang padi di bagian "Gabah Pilihan Berkualitas".
+                </span>
+                <input type="file" id="img_pertanian_input" accept="image/jpeg, image/png, image/webp" class="form-input">
+                <input type="hidden" id="img_pertanian" name="img_pertanian">
+              </div>
+              <div style="width:160px; height:120px; border-radius:8px; overflow:hidden; border:2px dashed var(--border-color); display:flex; align-items:center; justify-content:center; background:#f9fafb;">
+                <img id="img_pertanian_preview" src="/assets/images/pertanian.webp" style="width:100%; height:100%; object-fit:cover;" alt="Preview">
+              </div>
+            </div>
+
+            <!-- Image 2: Peternakan -->
+            <div style="background:var(--bg-alt); padding:1.5rem; border-radius:var(--radius-md); border:1px solid var(--border-color); display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap;">
+              <div style="flex: 1; min-width: 250px;">
+                <label class="form-label" style="font-size:1rem; font-weight:700; color:var(--primary-blue);">
+                  2. Gambar Pilar Utama Peternakan
+                </label>
+                <span style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:0.75rem;">
+                  Mengganti gambar kandang sapi di bagian "Sentra Peternakan Sapi Sehat".
+                </span>
+                <input type="file" id="img_peternakan_input" accept="image/jpeg, image/png, image/webp" class="form-input">
+                <input type="hidden" id="img_peternakan" name="img_peternakan">
+              </div>
+              <div style="width:160px; height:120px; border-radius:8px; overflow:hidden; border:2px dashed var(--border-color); display:flex; align-items:center; justify-content:center; background:#f9fafb;">
+                <img id="img_peternakan_preview" src="/assets/images/peternakan.webp" style="width:100%; height:100%; object-fit:cover;" alt="Preview">
+              </div>
+            </div>
+
+          </div>
+
+          <div style="margin-top:2rem; text-align:right;">
+            <button type="submit" class="btn-primary" style="padding:0.85rem 2rem;">
+              Simpan Perubahan Gambar
             </button>
           </div>
         </form>

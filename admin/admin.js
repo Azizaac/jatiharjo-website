@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   loadAllData();
   initFormListeners();
+  handleFeatureImagePreview('img_pertanian_input', 'img_pertanian_preview', 'img_pertanian');
+  handleFeatureImagePreview('img_peternakan_input', 'img_peternakan_preview', 'img_peternakan');
 });
 
 /* 1. TAB NAVIGATION */
@@ -151,6 +153,15 @@ function populateSettingsForm(s) {
     document.getElementById('wa_kelompok_ternak').value = s.wa_kelompok_ternak || '6281234567890';
     document.getElementById('wa_kelompok_tani').value = s.wa_kelompok_tani || '6281234567890';
     document.getElementById('wa_daftar_umkm').value = s.wa_daftar_umkm || '6281234567890';
+    
+    if (s.img_pertanian) {
+      document.getElementById('img_pertanian_preview').src = s.img_pertanian;
+      document.getElementById('img_pertanian').value = s.img_pertanian;
+    }
+    if (s.img_peternakan) {
+      document.getElementById('img_peternakan_preview').src = s.img_peternakan;
+      document.getElementById('img_peternakan').value = s.img_peternakan;
+    }
   }
 }
 
@@ -231,6 +242,45 @@ function handleImagePreview(input) {
     };
     reader.readAsDataURL(file);
   }
+}
+
+function handleFeatureImagePreview(inputId, previewId, hiddenInputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  input.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const file = this.files[0];
+      if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+        Swal.fire('Format Tidak Didukung', 'Hanya diperbolehkan format gambar JPG, PNG, dan WEBP.', 'warning');
+        this.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const MAX_WIDTH = 1200;
+          let width = img.width;
+          let height = img.height;
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          const dataUrl = canvas.toDataURL('image/webp', 0.8);
+          document.getElementById(previewId).src = dataUrl;
+          document.getElementById(hiddenInputId).value = dataUrl;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 }
 
 /* 4. FORM SUBMISSION LISTENERS VIA SAVE.PHP */
@@ -318,6 +368,35 @@ function initFormListeners() {
 
         if (data.success) {
           showAdminToast(data.message || 'Nomor WhatsApp narahubung berhasil diperbarui!');
+          loadAllData();
+        } else {
+          showAdminToast(data.error || 'Terjadi kesalahan', true);
+        }
+      } catch (err) {
+        showAdminToast('Gagal terhubung ke server save.php.', true);
+      }
+    });
+  }
+
+  // Images Form
+  const imagesForm = document.getElementById('images-form');
+  if (imagesForm) {
+    imagesForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(imagesForm);
+      formData.set('action', 'save_settings');
+      formData.set('csrf_token', getCsrfToken());
+
+      try {
+        const res = await fetch('/save.php', {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin'
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showAdminToast(data.message || 'Gambar fitur berhasil diperbarui!');
           loadAllData();
         } else {
           showAdminToast(data.error || 'Terjadi kesalahan', true);

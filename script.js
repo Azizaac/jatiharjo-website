@@ -74,6 +74,16 @@ function applySettingsData(s) {
     if (el) el.innerText = s.stat_poktan_label;
   }
 
+  // Update Feature Images
+  if (s.img_pertanian) {
+    const el = document.getElementById('img-pertanian');
+    if (el) el.src = s.img_pertanian;
+  }
+  if (s.img_peternakan) {
+    const el = document.getElementById('img-peternakan');
+    if (el) el.src = s.img_peternakan;
+  }
+
   // Update WA Contact URLs
   if (s.wa_kelompok_tani) {
     const btn = document.getElementById('btn-wa-tani');
