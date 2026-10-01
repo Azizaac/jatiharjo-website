@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFormListeners();
   handleMultiImageUpload('pertanian_images_input', 'pertanian_images_preview_container', 'pertanianNewImages');
   handleMultiImageUpload('peternakan_images_input', 'peternakan_images_preview_container', 'peternakanNewImages');
+  initGalleryImageCompression();
 });
 
 /* 1. TAB NAVIGATION */
@@ -41,11 +42,21 @@ function initTabs() {
 /* 2. LOAD ALL DATA FROM DATA.JSON */
 async function loadAllData() {
   const tbody = document.getElementById('products-tbody');
+  const galleryTbody = document.getElementById('gallery-tbody');
   if (tbody) {
     tbody.innerHTML = `
       <tr>
         <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">
           Memuat data dari data.json...
+        </td>
+      </tr>
+    `;
+  }
+  if (galleryTbody) {
+    galleryTbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">
+          Memuat data galeri...
         </td>
       </tr>
     `;
@@ -61,9 +72,16 @@ async function loadAllData() {
     // Cache products & settings
     window.cachedProducts = data.products || [];
     window.cachedSettings = data.settings || {};
+    window.cachedGallery = data.gallery || [];
 
     // Render Products Table
     renderProductsTable(window.cachedProducts);
+
+    // Update: render galeri + hero carousel slots
+    renderGalleryTable(window.cachedGallery);
+    const heroImgs = parseHeroImages(window.cachedSettings.hero_images);
+    window.heroStoredImages = heroImgs;
+    renderHeroSlots(heroImgs);
 
     // Populate Settings Forms
     populateSettingsForm(window.cachedSettings);
@@ -80,6 +98,20 @@ async function loadAllData() {
       `;
     }
   }
+}
+
+function parseHeroImages(val) {
+  const fallback = ['assets/images/hero.webp', 'assets/images/hero-kkn.jpg', ''];
+  if (!val) return fallback;
+  try {
+    const arr = Array.isArray(val) ? val : JSON.parse(val);
+    if (Array.isArray(arr)) {
+      const out = [arr[0] || '', arr[1] || '', arr[2] || ''];
+      if (!out[0] && !out[1] && !out[2]) return fallback.slice(0, 1).concat(['', '']);
+      return out;
+    }
+  } catch (e) {}
+  return fallback;
 }
 
 /* RENDER PRODUCTS TABLE */
@@ -517,6 +549,26 @@ function initFormListeners() {
       } catch (err) { showAdminToast('Gagal terhubung ke server save.php.', true); }
     });
   }
+
+  // Update: Gallery Form (Supabase table gallery)
+  const galleryForm = document.getElementById('gallery-form');
+  if (galleryForm) {
+    galleryForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(galleryForm);
+      formData.set('action', 'save_gallery');
+      formData.set('csrf_token', getCsrfToken());
+      if (window.compressedGalleryBlob) {
+        formData.set('image_file', window.compressedGalleryBlob, 'gallery.webp');
+      }
+      try {
+        const res = await fetch('/save.php', { method: 'POST', body: formData, credentials: 'same-origin' });
+        const data = await res.json();
+        if (data.success) { showAdminToast(data.message || 'Foto galeri tersimpan!'); closeGalleryModal(); loadAllData(); }
+        else { showAdminToast(data.error || 'Terjadi kesalahan', true); }
+      } catch (err) { showAdminToast('Gagal terhubung ke server save.php.', true); }
+    });
+  }
 }
 
 /* 5. DELETE PRODUCT */
@@ -595,4 +647,266 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.appendChild(document.createTextNode(String(str)));
   return div.innerHTML;
+}
+
+/* =====================================================
+   UPDATE: GALERI DESA (Supabase table gallery)
+   ===================================================== */
+function renderGalleryTable(gallery) {
+  const tbody = document.getElementById('gallery-tbody');
+  if (!tbody) return;
+  if (!gallery || gallery.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">
+          Belum ada foto dokumentasi. Klik "+ Tambah Foto Dokumentasi" untuk menambahkan.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  tbody.innerHTML = gallery.map((g, idx) => {
+    const imgSrc = getSafeImageSrc(g.image_path).replace('/assets/images/umkm.webp', '/assets/images/hero.webp');
+    const safeId = parseInt(g.id, 10);
+    const descShort = g.description && g.description.length > 60 ? escapeHtml(g.description.substring(0, 60)) + '...' : escapeHtml(g.description || '-');
+    return `
+      <tr>
+        <td><strong>${idx + 1}</strong></td>
+        <td><img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(g.title)}" class="thumb-img" style="width:70px;height:50px;object-fit:cover;border-radius:6px;" onerror="this.src='/assets/images/hero.webp'"></td>
+        <td><strong>${escapeHtml(g.title)}</strong></td>
+        <td><span class="badge-cat" style="background:var(--primary-green-subtle);color:var(--primary-green);font-size:0.75rem;">${escapeHtml(g.category || 'Kegiatan')}</span></td>
+        <td><small style="color:var(--text-muted);font-weight:600;">${escapeHtml(g.date || '-')}</small></td>
+        <td style="font-size:0.85rem;color:var(--text-muted);max-width:250px;">${descShort}</td>
+        <td>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn-sm btn-edit" onclick="openEditGalleryModal(${safeId})">Edit</button>
+            <button class="btn-sm btn-delete" onclick="confirmDeleteGallery(${safeId})">Hapus</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function openAddGalleryModal() {
+  document.getElementById('gallery-modal-title').innerText = 'Tambah Foto Dokumentasi';
+  document.getElementById('gallery-form').reset();
+  document.getElementById('gallery-id').value = '';
+  document.getElementById('gallery-image-url-input').value = '';
+  document.getElementById('gallery-preview-img').src = '/assets/images/hero.webp';
+  window.compressedGalleryBlob = null;
+  document.getElementById('gallery-modal-backdrop').classList.add('active');
+}
+
+function openEditGalleryModal(id) {
+  const safeId = parseInt(id, 10);
+  const g = (window.cachedGallery || []).find(item => parseInt(item.id, 10) === safeId);
+  if (!g) return;
+  document.getElementById('gallery-modal-title').innerText = 'Edit Foto Dokumentasi';
+  document.getElementById('gallery-id').value = safeId;
+  document.getElementById('gallery-title-input').value = g.title || '';
+  document.getElementById('gallery-category').value = g.category || 'Kegiatan';
+  document.getElementById('gallery-date').value = g.date || '';
+  document.getElementById('gallery-desc').value = g.description || '';
+  document.getElementById('gallery-image-url-input').value = g.image_path || '';
+  document.getElementById('gallery-preview-img').src = getSafeImageSrc(g.image_path).replace('/assets/images/umkm.webp', '/assets/images/hero.webp');
+  window.compressedGalleryBlob = null;
+  document.getElementById('gallery-modal-backdrop').classList.add('active');
+}
+
+function closeGalleryModal() {
+  document.getElementById('gallery-modal-backdrop').classList.remove('active');
+}
+
+function handleGalleryImagePreview(input) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+      Swal.fire('Format Tidak Didukung', 'Hanya JPG, PNG, dan WEBP.', 'warning');
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const MAX_WIDTH = 1200;
+        let width = img.width, height = img.height;
+        if (width > MAX_WIDTH) { height = Math.round((height * MAX_WIDTH) / width); width = MAX_WIDTH; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          window.compressedGalleryBlob = blob;
+          document.getElementById('gallery-preview-img').src = URL.createObjectURL(blob);
+        }, 'image/webp', 0.8);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function initGalleryImageCompression() {
+  // Gallery form submit + hero slot file handling didaftarkan di initFormListeners & renderHeroSlots
+}
+
+function confirmDeleteGallery(id) {
+  const safeId = parseInt(id, 10);
+  Swal.fire({
+    title: 'Hapus Foto?', text: 'Foto dokumentasi akan dihapus permanen.', icon: 'warning',
+    showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal'
+  }).then(async (result) => {
+    if (!result.isConfirmed) return;
+    const formData = new FormData();
+    formData.append('action', 'delete_gallery');
+    formData.append('id', safeId);
+    formData.append('csrf_token', getCsrfToken());
+    try {
+      const res = await fetch('/save.php', { method: 'POST', body: formData, credentials: 'same-origin' });
+      const data = await res.json();
+      if (data.success) { Swal.fire('Terhapus!', data.message, 'success'); loadAllData(); }
+      else Swal.fire('Gagal!', data.error || 'Gagal menghapus.', 'error');
+    } catch (err) { Swal.fire('Error!', 'Gagal terhubung ke server.', 'error'); }
+  });
+}
+
+/* =====================================================
+   UPDATE: HERO CAROUSEL SLOTS (Supabase settings.hero_images)
+   ===================================================== */
+const heroPendingFiles = [null, null, null];
+
+function renderHeroSlots(imagesArray) {
+  const container = document.getElementById('hero-carousel-slots');
+  if (!container) return;
+  const labels = ['Foto 1 (Utama)', 'Foto 2', 'Foto 3'];
+  const arr = [imagesArray[0] || '', imagesArray[1] || '', imagesArray[2] || ''];
+  container.innerHTML = '';
+  arr.forEach((imgPath, i) => {
+    const hasImage = !!imgPath;
+    const displaySrc = hasImage ? ("/" + String(imgPath).replace(/^[./]+/, '')) : '';
+    const isHttp = hasImage && /^https?:\/\//i.test(imgPath);
+    const box = document.createElement('div');
+    box.style.cssText = 'background:var(--bg-alt);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1rem;display:flex;flex-direction:column;gap:0.75rem;';
+    const label = document.createElement('span');
+    label.style.cssText = 'font-size:0.85rem;font-weight:700;color:var(--text-muted);';
+    label.textContent = labels[i];
+    const prevWrap = document.createElement('div');
+    prevWrap.style.cssText = 'width:100%;height:140px;background:var(--bg-surface);border:1px dashed var(--border-color);border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;';
+    if (hasImage) {
+      const img = document.createElement('img');
+      img.id = `hero-preview-${i}`;
+      img.src = isHttp ? imgPath : displaySrc;
+      img.alt = 'Slot ' + (i + 1);
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+      img.onerror = function() { this.style.display = 'none'; };
+      prevWrap.appendChild(img);
+    } else {
+      const span = document.createElement('span');
+      span.id = `hero-preview-${i}`;
+      span.style.cssText = 'color:var(--text-muted);font-size:0.8rem;text-align:center;padding:1rem;';
+      span.textContent = 'Belum ada foto';
+      prevWrap.appendChild(span);
+    }
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.id = `hero-file-${i}`;
+    fileInput.accept = 'image/png,image/jpeg,image/webp';
+    fileInput.style.fontSize = '0.8rem';
+    fileInput.addEventListener('change', function() { handleHeroFilePreview(this, i); });
+    box.appendChild(label);
+    box.appendChild(prevWrap);
+    box.appendChild(fileInput);
+    if (hasImage) {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-sm btn-delete';
+      delBtn.style.cssText = 'font-size:0.78rem;padding:0.35rem 0.75rem;';
+      delBtn.textContent = '🗑️ Hapus Foto';
+      delBtn.addEventListener('click', () => deleteHeroSlot(i));
+      box.appendChild(delBtn);
+    }
+    container.appendChild(box);
+  });
+  heroPendingFiles[0] = heroPendingFiles[1] = heroPendingFiles[2] = null;
+}
+
+function handleHeroFilePreview(input, slot) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+      Swal.fire('Format Tidak Didukung', 'Hanya JPG/PNG/WEBP.', 'warning');
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const MAX_WIDTH = 1600;
+        let width = img.width, height = img.height;
+        if (width > MAX_WIDTH) { height = Math.round((height * MAX_WIDTH) / width); width = MAX_WIDTH; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          // Simpan sebagai File agar bisa diupload via FormData
+          heroPendingFiles[slot] = new File([blob], 'hero.webp', { type: 'image/webp' });
+          const previewEl = document.getElementById(`hero-preview-${slot}`);
+          const url = URL.createObjectURL(blob);
+          if (previewEl && previewEl.tagName === 'SPAN') {
+            const ni = document.createElement('img');
+            ni.id = previewEl.id;
+            ni.src = url;
+            ni.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+            previewEl.replaceWith(ni);
+          } else if (previewEl) {
+            previewEl.src = url;
+            previewEl.style.display = 'block';
+          }
+        }, 'image/webp', 0.82);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function deleteHeroSlot(slot) {
+  if (!confirm(`Hapus foto slot ${slot + 1} dari carousel hero?`)) return;
+  heroPendingFiles[slot] = 'DELETE';
+  const previewEl = document.getElementById(`hero-preview-${slot}`);
+  if (previewEl && previewEl.tagName === 'IMG') {
+    const span = document.createElement('span');
+    span.id = previewEl.id;
+    span.style.cssText = 'color:var(--text-muted);font-size:0.8rem;text-align:center;padding:1rem;';
+    span.textContent = 'Belum ada foto';
+    previewEl.replaceWith(span);
+  }
+  const fi = document.getElementById(`hero-file-${slot}`);
+  if (fi) fi.value = '';
+  showAdminToast(`Foto slot ${slot + 1} akan dihapus saat klik Simpan.`);
+}
+
+async function saveCarouselImages(type) {
+  if (type !== 'hero') return;
+  const formData = new FormData();
+  formData.append('action', 'save_carousel_images');
+  formData.append('carousel_type', 'hero');
+  formData.append('csrf_token', getCsrfToken());
+  const current = window.heroStoredImages || ['', '', ''];
+  for (let i = 0; i < 3; i++) {
+    const pending = heroPendingFiles[i];
+    if (pending === 'DELETE') formData.append(`delete_slot_${i}`, '1');
+    else if (pending instanceof File) formData.append(`image_file_slot_${i}`, pending);
+    else formData.append(`slot_${i}`, current[i] || '');
+  }
+  try {
+    const res = await fetch('/save.php', { method: 'POST', body: formData, credentials: 'same-origin' });
+    const data = await res.json();
+    if (data.success) {
+      showAdminToast(data.message || 'Carousel hero diperbarui!');
+      window.heroStoredImages = data.images || ['', '', ''];
+      renderHeroSlots(window.heroStoredImages);
+    } else showAdminToast(data.error || 'Gagal menyimpan', true);
+  } catch (err) { showAdminToast('Gagal terhubung ke server.', true); }
 }

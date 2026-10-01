@@ -55,11 +55,90 @@ function sanitizeText($value, $maxLength = 500) {
 }
 
 function sanitizeImageUrl($url) {
-    $url = trim($url);
-    if (empty($url) || !preg_match('/^https?:\/\//i', $url) || preg_match('/^(javascript|vbscript|data):/i', $url) || strlen($url) > 2048) {
+    $url = trim((string)$url);
+    if ($url === '' || strlen($url) > 2048) {
         return null;
     }
-    return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+    // Hanya izinkan http/https, tolak javascript:/vbscript:/data:
+    if (!preg_match('/^https?:\/\//i', $url) || preg_match('/^(javascript|vbscript|data):/i', $url)) {
+        return null;
+    }
+    // Kembalikan URL mentah (tanpa htmlspecialchars) — escaping dilakukan di frontend
+    // agar parameter query seperti &w=800 tidak rusak menjadi &amp;w=800 di DB.
+    return $url;
+}
+
+// Update: helper upload ke Supabase Storage bucket "uploads", mengembalikan public URL atau null
+function uploadToSupabaseStorage($fileInfo, $prefix, $supabaseUrl, $supabaseKey) {
+    if (!isset($fileInfo) || $fileInfo['error'] !== UPLOAD_ERR_OK) return null;
+    if ($fileInfo['size'] > MAX_FILE_SIZE_BYTES) return ['error' => 'Ukuran file terlalu besar. Maksimum 2MB.'];
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $detectedMime = finfo_file($finfo, $fileInfo['tmp_name']);
+    finfo_close($finfo);
+    $ext = strtolower(pathinfo($fileInfo['name'], PATHINFO_EXTENSION));
+
+    if (!in_array($detectedMime, ALLOWED_MIME_TYPES, true) || !in_array($ext, ALLOWED_EXTENSIONS, true)) {
+        return ['error' => 'Tipe file tidak diizinkan. Hanya JPG, PNG, dan WEBP yang diterima.'];
+    }
+
+    $newFileName = $prefix . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
+    $fileContent = file_get_contents($fileInfo['tmp_name']);
+
+    $endpoint = rtrim($supabaseUrl, '/') . '/storage/v1/object/uploads/' . $newFileName;
+    $ch = curl_init($endpoint);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fileContent);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "apikey: $supabaseKey",
+        "Authorization: Bearer $supabaseKey",
+        "Content-Type: $detectedMime",
+        "x-upsert: true"
+    ]);
+    curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200 || $httpCode === 201) {
+        return ['url' => rtrim($supabaseUrl, '/') . '/storage/v1/object/public/uploads/' . $newFileName];
+    }
+    return ['error' => 'Gagal mengupload gambar ke Supabase.'];
+}
+
+function supabaseUpsertSettings($payloads, $supabaseUrl, $supabaseKey) {
+    $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/settings';
+    $ch = curl_init($dbEndpoint);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payloads));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "apikey: $supabaseKey",
+        "Authorization: Bearer $supabaseKey",
+        "Content-Type: application/json",
+        "Prefer: resolution=merge-duplicates"
+    ]);
+    curl_setopt($ch, CURLOPT_ENCODING, "");
+    $res = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    return $httpCode;
+}
+
+function supabaseGetSettingValue($key, $supabaseUrl, $supabaseKey) {
+    $endpoint = rtrim($supabaseUrl, '/') . '/rest/v1/settings?key=eq.' . urlencode($key) . '&select=value';
+    $ch = curl_init($endpoint);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_ENCODING, "");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "apikey: $supabaseKey",
+        "Authorization: Bearer $supabaseKey"
+    ]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+    $data = json_decode($res, true);
+    if (is_array($data) && count($data) > 0 && isset($data[0]['value'])) return $data[0]['value'];
+    return null;
 }
 
 $action = $_POST['action'] ?? '';
@@ -306,6 +385,182 @@ try {
         }
 
         echo json_encode(['success' => true, 'message' => 'Tidak ada pengaturan yang diubah.']);
+        exit;
+
+    } elseif ($action === 'save_gallery') {
+        // Update: CRUD tabel gallery (Supabase). Kolom: title, category, date, description, image_path
+        $id          = !empty($_POST['id']) ? (int)$_POST['id'] : null;
+        $title       = sanitizeText($_POST['title'] ?? '', 200);
+        $category    = sanitizeText($_POST['category'] ?? 'Kegiatan', 50);
+        $date        = sanitizeText($_POST['date'] ?? '', 50);
+        $description = sanitizeText($_POST['description'] ?? '', 1000);
+        $image_url_input = sanitizeImageUrl($_POST['image_url_input'] ?? '');
+
+        if (empty($title)) {
+            echo json_encode(['success' => false, 'error' => 'Judul foto dokumentasi wajib diisi.']);
+            exit;
+        }
+
+        $validGalleryCats = ['Kegiatan', 'Pertanian', 'Peternakan', 'UMKM', 'Lingkungan'];
+        if (!in_array($category, $validGalleryCats, true)) $category = 'Kegiatan';
+
+        $image_path = null;
+        if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
+            $up = uploadToSupabaseStorage($_FILES['image_file'], 'gallery', $supabaseUrl, $supabaseKey);
+            if (!is_array($up) || isset($up['error'])) {
+                echo json_encode(['success' => false, 'error' => (is_array($up) && isset($up['error'])) ? $up['error'] : 'Gagal mengupload gambar ke Supabase.']);
+                exit;
+            }
+            $image_path = $up['url'];
+        }
+        if (!$image_path && !empty($image_url_input)) $image_path = $image_url_input;
+
+        $payload = [
+            'title'       => $title,
+            'category'    => $category,
+            'date'        => $date,
+            'description' => $description
+        ];
+        if ($image_path) $payload['image_path'] = $image_path;
+
+        if ($id) {
+            $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/gallery?id=eq.' . $id;
+            $ch = curl_init($dbEndpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey",
+                "Content-Type: application/json",
+                "Prefer: return=minimal"
+            ]);
+            curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if ($httpCode >= 200 && $httpCode < 300) {
+                echo json_encode(['success' => true, 'message' => 'Foto galeri berhasil diperbarui.']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Gagal mengupdate galeri (Kode: '.$httpCode.'). Pastikan tabel "gallery" sudah dibuat di Supabase.']);
+            }
+            exit;
+        } else {
+            $maxIdEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/gallery?select=id&order=id.desc&limit=1';
+            $chMax = curl_init($maxIdEndpoint);
+            curl_setopt($chMax, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($chMax, CURLOPT_ENCODING, "");
+            curl_setopt($chMax, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey"
+            ]);
+            $maxRes = curl_exec($chMax);
+            curl_close($chMax);
+            $nextId = 1;
+            $maxData = json_decode($maxRes, true);
+            if (is_array($maxData) && count($maxData) > 0 && isset($maxData[0]['id'])) {
+                $nextId = (int)$maxData[0]['id'] + 1;
+            }
+            $payload['id'] = $nextId;
+            if (!isset($payload['image_path'])) $payload['image_path'] = 'assets/images/hero.webp';
+
+            $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/gallery';
+            $ch = curl_init($dbEndpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey",
+                "Content-Type: application/json",
+                "Prefer: return=minimal"
+            ]);
+            curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if ($httpCode >= 200 && $httpCode < 300) {
+                echo json_encode(['success' => true, 'message' => 'Foto dokumentasi baru berhasil ditambahkan.']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Gagal menyimpan galeri (Kode: '.$httpCode.'). Pastikan tabel "gallery" sudah dibuat di Supabase.']);
+            }
+            exit;
+        }
+
+    } elseif ($action === 'delete_gallery') {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id > 0) {
+            $dbEndpoint = rtrim($supabaseUrl, '/') . '/rest/v1/gallery?id=eq.' . $id;
+            $ch = curl_init($dbEndpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: $supabaseKey",
+                "Authorization: Bearer $supabaseKey",
+                "Content-Type: application/json"
+            ]);
+            curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if ($httpCode >= 200 && $httpCode < 300) {
+                echo json_encode(['success' => true, 'message' => 'Foto galeri berhasil dihapus.']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Gagal menghapus galeri (Kode: '.$httpCode.').']);
+            }
+            exit;
+        }
+        echo json_encode(['success' => false, 'error' => 'ID foto tidak valid.']);
+        exit;
+
+    } elseif ($action === 'save_carousel_images') {
+        // Update: simpan 3 slot gambar carousel hero ke Supabase settings.hero_images (JSON array)
+        $carouselType = trim($_POST['carousel_type'] ?? '');
+        if ($carouselType !== 'hero') {
+            echo json_encode(['success' => false, 'error' => 'Jenis carousel tidak valid. Saat ini hanya hero yang dikelola di tab Carousel.']);
+            exit;
+        }
+        $dataKey = 'hero_images';
+
+        $currentRaw = supabaseGetSettingValue($dataKey, $supabaseUrl, $supabaseKey);
+        $current = ['', '', ''];
+        if ($currentRaw) {
+            $decoded = json_decode($currentRaw, true);
+            if (is_array($decoded)) {
+                for ($i = 0; $i < 3; $i++) $current[$i] = $decoded[$i] ?? '';
+            }
+        }
+        $slots = $current;
+
+        for ($i = 0; $i <= 2; $i++) {
+            $fileKey = "image_file_slot_{$i}";
+            $pathKey = "slot_{$i}";
+            $deleteKey = "delete_slot_{$i}";
+
+            if (!empty($_POST[$deleteKey])) { $slots[$i] = ''; continue; }
+
+            if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
+                $up = uploadToSupabaseStorage($_FILES[$fileKey], 'hero', $supabaseUrl, $supabaseKey);
+                if (!is_array($up) || isset($up['error'])) {
+                    echo json_encode(['success' => false, 'error' => (is_array($up) && isset($up['error'])) ? $up['error'] : 'Gagal mengupload gambar ke Supabase.']);
+                    exit;
+                }
+                $slots[$i] = $up['url'];
+            } elseif (isset($_POST[$pathKey])) {
+                $v = trim((string)$_POST[$pathKey]);
+                // Izinkan URL https atau path relatif assets/, tolak javascript:/data:
+                if ($v === '' || preg_match('/^(javascript|vbscript|data):/i', $v)) {
+                    if ($v !== '' && preg_match('/^(javascript|vbscript|data):/i', $v)) continue;
+                    $slots[$i] = $v;
+                } elseif (preg_match('/^https?:\/\//i', $v) || preg_match('/^assets\//', $v)) {
+                    $slots[$i] = $v;
+                }
+            }
+        }
+
+        $httpCode = supabaseUpsertSettings([['key' => $dataKey, 'value' => json_encode(array_values($slots))]], $supabaseUrl, $supabaseKey);
+        if ($httpCode >= 200 && $httpCode < 300) {
+            echo json_encode(['success' => true, 'message' => 'Gambar carousel hero berhasil diperbarui.', 'images' => array_values($slots)]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Gagal menyimpan carousel (Kode: '.$httpCode.').']);
+        }
         exit;
 
     } else {

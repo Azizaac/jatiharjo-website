@@ -20,7 +20,7 @@ $supabaseUrl = getenv('SUPABASE_URL') ?: $_ENV['SUPABASE_URL'] ?? $_SERVER['SUPA
 $supabaseKey = getenv('SUPABASE_KEY') ?: $_ENV['SUPABASE_KEY'] ?? $_SERVER['SUPABASE_KEY'] ?? '';
 
 if (!$supabaseUrl || !$supabaseKey) {
-    echo json_encode(['products' => [], 'settings' => []]);
+    echo json_encode(['products' => [], 'settings' => [], 'gallery' => []]);
     exit;
 }
 
@@ -51,6 +51,18 @@ curl_setopt($chS, CURLOPT_HTTPHEADER, [
 ]);
 curl_multi_add_handle($mh, $chS);
 
+// Request 3 (update): Fetch Gallery — jika tabel belum ada, PostgREST mengembalikan error dan kita fallback ke []
+$galleryUrl = rtrim($supabaseUrl, '/') . '/rest/v1/gallery?select=*&order=id.asc';
+$chG = curl_init($galleryUrl);
+curl_setopt($chG, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($chG, CURLOPT_TIMEOUT, 10);
+curl_setopt($chG, CURLOPT_ENCODING, "");
+curl_setopt($chG, CURLOPT_HTTPHEADER, [
+    "apikey: $supabaseKey",
+    "Authorization: Bearer $supabaseKey"
+]);
+curl_multi_add_handle($mh, $chG);
+
 // Eksekusi secara paralel
 $active = null;
 do {
@@ -69,10 +81,12 @@ while ($active && $mrc == CURLM_OK) {
 // Ambil hasil respons
 $productsRes = curl_multi_getcontent($chP);
 $settingsRes = curl_multi_getcontent($chS);
+$galleryRes = curl_multi_getcontent($chG);
 
 // Bersihkan memory cURL
 curl_multi_remove_handle($mh, $chP);
 curl_multi_remove_handle($mh, $chS);
+curl_multi_remove_handle($mh, $chG);
 curl_multi_close($mh);
 
 $products = json_decode($productsRes, true) ?: [];
@@ -82,12 +96,14 @@ if (isset($products['message'])) {
     $products = [];
 }
 
-// Convert legacy image_path from png/jpg to webp dynamically to save bandwidth and prevent 404s
+// Convert legacy relative image_path from png/jpg to webp (hemat bandwidth).
+// Jangan ubah URL https Supabase Storage — filenya memang berekstensi asli.
 foreach ($products as &$p) {
-    if (isset($p['image_path'])) {
+    if (isset($p['image_path']) && !preg_match('/^https?:\/\//i', $p['image_path'])) {
         $p['image_path'] = str_replace(['.png', '.jpg', '.jpeg'], '.webp', $p['image_path']);
     }
 }
+unset($p);
 
 $settingsRaw = json_decode($settingsRes, true) ?: [];
 
@@ -100,7 +116,20 @@ if (!isset($settingsRaw['message']) && is_array($settingsRaw)) {
     }
 }
 
+// Update: gallery — fallback [] jika tabel belum dibuat / error PostgREST
+$galleryDecoded = json_decode($galleryRes, true);
+if (!is_array($galleryDecoded) || isset($galleryDecoded['message'])) {
+    $gallery = [];
+} elseif (count($galleryDecoded) === 0) {
+    $gallery = [];
+} elseif (array_keys($galleryDecoded) === range(0, count($galleryDecoded) - 1)) {
+    $gallery = array_values($galleryDecoded);
+} else {
+    $gallery = [];
+}
+
 echo json_encode([
     'products' => $products,
-    'settings' => $settings
+    'settings' => $settings,
+    'gallery' => array_values($gallery)
 ]);

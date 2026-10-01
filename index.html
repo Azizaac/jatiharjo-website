@@ -46,7 +46,7 @@
         <li><a href="#pertanian" class="nav-link">Pertanian</a></li>
         <li><a href="#peternakan" class="nav-link">Peternakan</a></li>
         <li><a href="#umkm" class="nav-link">UMKM</a></li>
-        <li><a href="#galeri" class="nav-link">Galeri</a></li>
+        <li><a href="galeri.html" class="nav-link">Galeri</a></li>
         <li><a href="#kontak" class="nav-link">Kontak</a></li>
       </ul>
 
@@ -71,18 +71,23 @@
     <a href="#pertanian" class="mobile-nav-link nav-link">Pertanian Padi</a>
     <a href="#peternakan" class="mobile-nav-link nav-link">Peternakan Sapi</a>
     <a href="#umkm" class="mobile-nav-link nav-link">UMKM Lokal</a>
-    <a href="#galeri" class="mobile-nav-link nav-link">Galeri Desa</a>
+    <a href="galeri.html" class="mobile-nav-link nav-link">Galeri Desa</a>
     <a href="#kontak" class="mobile-nav-link nav-link">Kontak & Lokasi</a>
   </div>
 
 
   <!-- ==================== HERO SECTION ==================== -->
   <section id="home" class="hero-section">
-    <div class="hero-bg-wrapper">
-      <!-- ganti dengan foto asli desa -->
-      <img src="assets/images/hero.webp" alt="Hamparan Sawah Desa Jatiharjo Jatipuro Karanganyar" class="hero-bg-img" fetchpriority="high">
+    <!-- HERO CAROUSEL (update: multi-foto, dikelola dari admin) -->
+    <div class="hero-carousel" id="hero-carousel">
+      <div class="hero-carousel-slide active">
+        <img src="assets/images/hero.webp" alt="Hamparan Sawah Desa Jatiharjo Jatipuro Karanganyar" class="hero-bg-img" fetchpriority="high">
+      </div>
     </div>
     <div class="hero-overlay"></div>
+
+    <!-- Carousel Indicator Dots -->
+    <div class="hero-carousel-dots" id="hero-dots" style="display:none;"></div>
 
     <div class="container-custom hero-content">
       <div class="hero-badge">
@@ -380,7 +385,7 @@
         </p>
       </div>
 
-      <div class="gallery-grid">
+      <div class="gallery-grid" id="home-gallery-grid">
         <div class="gallery-item">
           <!-- ganti dengan foto asli desa -->
           <img src="assets/images/hero.webp" alt="Sawah Terasering Jatipuro" loading="lazy">
@@ -416,6 +421,13 @@
             <p style="font-size:0.85rem; color:rgba(255,255,255,0.8);">Produk olahan warga bernilai tambah</p>
           </div>
         </div>
+      </div>
+
+      <div style="text-align:center; margin-top:3rem;">
+        <a href="galeri.html" class="btn-primary" style="font-weight:600;">
+          Lihat Semua Foto Kegiatan di Halaman Galeri
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
       </div>
     </div>
   </section>

@@ -98,6 +98,8 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
     <!-- TABS BAR -->
     <div class="admin-tabs">
       <button class="tab-btn active" data-tab="umkm">🛍️ Katalog UMKM</button>
+      <button class="tab-btn" data-tab="gallery">📸 Galeri Desa</button>
+      <button class="tab-btn" data-tab="carousel">🖼️ Carousel Hero</button>
       <button class="tab-btn" data-tab="stats">📊 Statistik Desa</button>
       <button class="tab-btn" data-tab="contacts">📞 Kontak & Narahubung WA</button>
       <button class="tab-btn" data-tab="pertanian">🌾 Pilar Pertanian</button>
@@ -129,6 +131,60 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
               <!-- Loaded via admin.js -->
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB: GALERI DESA (update) ================= -->
+    <div id="tab-gallery" class="tab-content">
+      <div class="admin-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:700;">Dokumentasi &amp; Foto Kegiatan Desa</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">Foto tampil di beranda (maks 4 preview) dan halaman galeri publik.</span>
+          </div>
+          <button onclick="openAddGalleryModal()" class="btn-primary" style="padding:0.75rem 1.5rem; font-size:0.95rem;">
+            + Tambah Foto Dokumentasi
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width:50px;">No</th>
+                <th style="width:90px;">Gambar</th>
+                <th>Judul Dokumentasi</th>
+                <th>Kategori</th>
+                <th>Waktu / Tanggal</th>
+                <th>Deskripsi</th>
+                <th style="width:160px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="gallery-tbody">
+              <!-- Loaded via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB: CAROUSEL HERO (update) ================= -->
+    <div id="tab-carousel" class="tab-content">
+      <div class="admin-card">
+        <h3 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem;">Edit Gambar Carousel Hero</h3>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:2rem;">
+          Kelola hingga 3 foto header beranda. Foto tersimpan di Supabase Storage. Kosongkan slot untuk menyembunyikan.
+        </p>
+
+        <div style="margin-bottom:2rem;">
+          <h4 style="color:var(--primary-green); font-size:1.1rem; font-weight:700; margin-bottom:1.25rem; border-bottom:2px solid var(--primary-green); padding-bottom:0.5rem;">🏞️ Hero / Header (Maks. 3 Foto)</h4>
+          <div id="hero-carousel-slots" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:1.25rem; margin-bottom:1rem;">
+            <!-- Rendered by admin.js -->
+          </div>
+          <button onclick="saveCarouselImages('hero')" class="btn-primary" style="padding:0.75rem 1.75rem;">
+            Simpan Perubahan Hero
+          </button>
         </div>
       </div>
     </div>
@@ -473,6 +529,68 @@ header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval
           </button>
           <button type="submit" class="btn-primary" style="padding:0.75rem 2rem;">
             Simpan Produk
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL TAMBAH / EDIT GALERI (update) ==================== -->
+  <div id="gallery-modal-backdrop" class="modal-backdrop" onclick="if(event.target === this) closeGalleryModal()">
+    <div class="modal-content-box" style="max-width:680px;">
+      <button class="modal-close-btn" onclick="closeGalleryModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+
+      <h3 id="gallery-modal-title" style="font-size:1.5rem; font-weight:800; margin-bottom:1.5rem;">Tambah Foto Dokumentasi</h3>
+
+      <form id="gallery-form" enctype="multipart/form-data">
+        <input type="hidden" id="gallery-id" name="id" value="">
+        <input type="hidden" id="gallery-image-url-input" name="image_url_input" value="">
+
+        <div class="form-group">
+          <label class="form-label" for="gallery-title-input">Judul Dokumentasi / Foto *</label>
+          <input type="text" id="gallery-title-input" name="title" class="form-input" placeholder="Contoh: Kerja Bakti Saluran Irigasi Sawah" required>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="gallery-category">Kategori Dokumentasi *</label>
+            <select id="gallery-category" name="category" class="form-input" style="cursor:pointer;" required>
+              <option value="Kegiatan">Kegiatan Warga &amp; Desa</option>
+              <option value="Pertanian">Pertanian &amp; Panen</option>
+              <option value="Peternakan">Peternakan Sapi</option>
+              <option value="UMKM">UMKM &amp; Kerajinan</option>
+              <option value="Lingkungan">Lingkungan &amp; Alam</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="gallery-date">Waktu / Tanggal Pelaksanaan</label>
+            <input type="text" id="gallery-date" name="date" class="form-input" placeholder="Contoh: September 2026">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="gallery-desc">Deskripsi Singkat Dokumentasi</label>
+          <textarea id="gallery-desc" name="description" class="form-textarea" rows="3" placeholder="Tuliskan keterangan singkat kegiatan..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Upload Foto Dokumentasi (Format JPG/PNG/WEBP, Maks 2MB)</label>
+          <input type="file" id="gallery-image-file" name="image_file" class="form-input" accept="image/png, image/jpeg, image/webp" onchange="handleGalleryImagePreview(this)">
+
+          <div class="image-preview-box" style="height:180px;">
+            <img id="gallery-preview-img" src="/assets/images/hero.webp" alt="Preview Foto Dokumentasi">
+          </div>
+        </div>
+
+        <div class="modal-form-actions">
+          <button type="button" onclick="closeGalleryModal()" class="btn-secondary" style="color:var(--text-main); border-color:var(--border-color); background:var(--bg-alt);">
+            Batal
+          </button>
+          <button type="submit" class="btn-primary" style="padding:0.75rem 2rem;">
+            Simpan Foto
           </button>
         </div>
       </form>

@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initBackToTop();
 });
 
-/* 0. FETCH DYNAMIC DATA FROM DATA.JSON (ZERO DATABASE) */
+/* 0. FETCH DYNAMIC DATA FROM SUPABASE VIA get-data.php */
 async function fetchDynamicData() {
   try {
     // Ambil data (tanpa query string agar bisa dicache oleh Vercel CDN untuk pengunjung publik)
@@ -29,14 +29,43 @@ async function fetchDynamicData() {
       renderUmkmProducts(data.products);
       initUmkmFilter(); // Re-bind filter for newly rendered cards
     }
+
+    // Update: render galeri preview di beranda (maks 4 foto)
+    if (data.gallery && data.gallery.length > 0) {
+      renderHomeGallery(data.gallery);
+    }
   } catch (err) {
     console.log('Using default HTML fallback data.');
+    renderHeroCarousel(['assets/images/hero.webp']);
   } finally {
     initCounters();
   }
 }
 
+function parseImagesSetting(val, fallback) {
+  if (!val) return fallback;
+  try {
+    if (Array.isArray(val)) return val.filter(Boolean).length ? val.filter(Boolean) : fallback;
+    const arr = JSON.parse(val);
+    if (Array.isArray(arr)) {
+      const filtered = arr.filter(Boolean);
+      return filtered.length ? filtered : fallback;
+    }
+    return fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
 function applySettingsData(s) {
+  // Update: Hero carousel images (dikelola dari admin, disimpan sebagai JSON array)
+  if (s.hero_images !== undefined) {
+    const heroImgs = parseImagesSetting(s.hero_images, ['assets/images/hero.webp']);
+    renderHeroCarousel(heroImgs);
+  } else {
+    renderHeroCarousel(['assets/images/hero.webp']);
+  }
+
   // Update Stats values and labels
   if (s.stat_sawah_val) {
     const el = document.getElementById('stat-sawah-val');
@@ -603,4 +632,173 @@ function renderCarousel(prefix, images) {
     wrapper.addEventListener('touchstart', stopAutoplay, { passive: true });
     wrapper.addEventListener('touchend', startAutoplay, { passive: true });
   }
+}
+
+/* =====================================================
+   UPDATE: HERO CAROUSEL (multi-foto fade, dari Supabase settings.hero_images)
+   ===================================================== */
+let heroCurrentSlide = 0;
+let heroAutoPlayTimer = null;
+let heroImages = [];
+
+function renderHeroCarousel(images) {
+  const safeImages = (images || []).map(getSafeImageSrc).filter(Boolean);
+  heroImages = safeImages.length ? safeImages : ['assets/images/hero.webp'];
+  const container = document.getElementById('hero-carousel');
+  const dotsEl = document.getElementById('hero-dots');
+  if (!container) return;
+
+  if (heroAutoPlayTimer) {
+    clearInterval(heroAutoPlayTimer);
+    heroAutoPlayTimer = null;
+  }
+  heroCurrentSlide = 0;
+
+  container.innerHTML = '';
+  heroImages.forEach((src, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'hero-carousel-slide' + (i === 0 ? ' active' : '');
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Foto Desa Jatiharjo ' + (i + 1);
+    img.className = 'hero-bg-img';
+    if (i === 0) img.setAttribute('fetchpriority', 'high');
+    else img.setAttribute('loading', 'lazy');
+    img.onerror = function() { this.src = 'assets/images/hero.webp'; };
+    slide.appendChild(img);
+    container.appendChild(slide);
+  });
+
+  if (dotsEl) {
+    dotsEl.innerHTML = '';
+    if (heroImages.length > 1) {
+      dotsEl.style.display = 'flex';
+      heroImages.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+        dot.addEventListener('click', () => goToHeroSlide(i));
+        dotsEl.appendChild(dot);
+      });
+    } else {
+      dotsEl.style.display = 'none';
+    }
+  }
+
+  if (heroImages.length > 1) startHeroAutoPlay();
+}
+
+function goToHeroSlide(idx, resetTimer = true) {
+  const slides = document.querySelectorAll('#hero-carousel .hero-carousel-slide');
+  const dots = document.querySelectorAll('#hero-dots .hero-dot');
+  if (!slides.length || heroImages.length <= 1) return;
+  heroCurrentSlide = ((idx % heroImages.length) + heroImages.length) % heroImages.length;
+  slides.forEach((s, i) => s.classList.toggle('active', i === heroCurrentSlide));
+  dots.forEach((d, i) => d.classList.toggle('active', i === heroCurrentSlide));
+  if (resetTimer) startHeroAutoPlay();
+}
+
+function startHeroAutoPlay() {
+  if (heroAutoPlayTimer) clearInterval(heroAutoPlayTimer);
+  heroAutoPlayTimer = setInterval(() => {
+    goToHeroSlide(heroCurrentSlide + 1, false);
+  }, 5000);
+}
+
+/* =====================================================
+   UPDATE: GALERI PREVIEW DI BERANDA (maks 4 foto dari Supabase gallery)
+   ===================================================== */
+function renderHomeGallery(gallery) {
+  const container = document.getElementById('home-gallery-grid');
+  if (!container) return;
+  const previewItems = gallery.slice(0, 4);
+
+  container.innerHTML = '';
+  previewItems.forEach((g) => {
+    const imgSrc = getSafeImageSrc(g.image_path) || 'assets/images/hero.webp';
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = g.title || 'Dokumentasi Desa Jatiharjo';
+    img.loading = 'lazy';
+    img.onerror = function() { this.src = 'assets/images/hero.webp'; };
+
+    const overlay = document.createElement('div');
+    overlay.className = 'gallery-overlay';
+
+    const cat = document.createElement('span');
+    cat.style.cssText = 'font-size:0.75rem;font-weight:700;color:#8FED9D;text-transform:uppercase;margin-bottom:0.25rem;display:block;';
+    cat.textContent = g.category || 'Kegiatan';
+
+    const title = document.createElement('h4');
+    title.style.cssText = 'font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:0.25rem;';
+    title.textContent = g.title || '';
+
+    const desc = document.createElement('p');
+    desc.style.cssText = 'font-size:0.85rem;color:rgba(255,255,255,0.85);';
+    desc.textContent = g.description || '';
+
+    overlay.appendChild(cat);
+    overlay.appendChild(title);
+    overlay.appendChild(desc);
+    item.appendChild(img);
+    item.appendChild(overlay);
+
+    item.style.cursor = 'pointer';
+    item.addEventListener('click', () => openGalleryDetailModal(g));
+
+    container.appendChild(item);
+  });
+}
+
+function openGalleryDetailModal(g) {
+  const backdrop = document.getElementById('modal-backdrop');
+  const modalBody = document.getElementById('modal-body-content');
+  if (!backdrop || !modalBody) return;
+  modalBody.innerHTML = '';
+
+  const imgWrap = document.createElement('div');
+  imgWrap.style.cssText = 'position:relative;height:300px;border-radius:12px;overflow:hidden;margin-bottom:1.5rem;background:var(--bg-alt);';
+  const img = document.createElement('img');
+  img.src = getSafeImageSrc(g.image_path) || 'assets/images/hero.webp';
+  img.alt = g.title || '';
+  img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+  img.onerror = function() { this.src = 'assets/images/hero.webp'; };
+  const badge = document.createElement('span');
+  badge.style.cssText = 'position:absolute;top:1rem;left:1rem;background:rgba(0,0,0,0.75);color:#fff;padding:0.4rem 1rem;border-radius:6px;font-size:0.8rem;font-weight:700;text-transform:uppercase;';
+  badge.textContent = g.category || 'Kegiatan';
+  imgWrap.appendChild(img);
+  imgWrap.appendChild(badge);
+  modalBody.appendChild(imgWrap);
+
+  if (g.date) {
+    const dateEl = document.createElement('div');
+    dateEl.style.cssText = 'font-size:0.85rem;color:var(--text-muted);font-weight:600;margin-bottom:0.5rem;';
+    dateEl.textContent = g.date;
+    modalBody.appendChild(dateEl);
+  }
+
+  const titleEl = document.createElement('h3');
+  titleEl.style.cssText = 'font-size:1.45rem;font-weight:800;margin-bottom:0.75rem;color:var(--text-main);';
+  titleEl.textContent = g.title || '';
+  modalBody.appendChild(titleEl);
+
+  const descEl = document.createElement('p');
+  descEl.style.cssText = 'font-size:0.95rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem;';
+  descEl.textContent = g.description || '';
+  modalBody.appendChild(descEl);
+
+  const linkWrap = document.createElement('div');
+  linkWrap.style.textAlign = 'right';
+  const link = document.createElement('a');
+  link.href = 'galeri.html';
+  link.className = 'btn-primary';
+  link.style.cssText = 'padding:0.6rem 1.25rem;font-size:0.9rem;text-decoration:none;';
+  link.textContent = 'Buka Halaman Galeri Lengkap →';
+  linkWrap.appendChild(link);
+  modalBody.appendChild(linkWrap);
+
+  backdrop.classList.add('active');
 }
