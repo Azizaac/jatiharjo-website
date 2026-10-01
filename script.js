@@ -36,7 +36,7 @@ async function fetchDynamicData() {
     }
   } catch (err) {
     console.log('Using default HTML fallback data.');
-    renderHeroCarousel(['assets/images/hero.webp']);
+    renderHeroCarousel(['assets/images/hero.webp', 'assets/images/hero-kkn.jpg']);
   } finally {
     initCounters();
   }
@@ -59,11 +59,13 @@ function parseImagesSetting(val, fallback) {
 
 function applySettingsData(s) {
   // Update: Hero carousel images (dikelola dari admin, disimpan sebagai JSON array)
+  // Fallback 2 foto = sama seperti fallback panel admin, agar hero tetap bergantian
+  // walau key hero_images belum pernah disimpan ke Supabase.
   if (s.hero_images !== undefined) {
-    const heroImgs = parseImagesSetting(s.hero_images, ['assets/images/hero.webp']);
+    const heroImgs = parseImagesSetting(s.hero_images, ['assets/images/hero.webp', 'assets/images/hero-kkn.jpg']);
     renderHeroCarousel(heroImgs);
   } else {
-    renderHeroCarousel(['assets/images/hero.webp']);
+    renderHeroCarousel(['assets/images/hero.webp', 'assets/images/hero-kkn.jpg']);
   }
 
   // Update Stats values and labels
