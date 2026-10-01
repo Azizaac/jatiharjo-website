@@ -1,3 +1,8 @@
 .env
 node_modules/
 vendor/
+# File lokal / runtime — jangan di-upload ke GitHub
+data.json
+assets/rate_limit.json
+assets/images/uploads/*
+!assets/images/uploads/.htaccess
