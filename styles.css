@@ -515,7 +515,7 @@ img {
 
 /* Stats Counter Section */
 .stats-strip {
-  margin-top: -4rem;
+  margin-top: 0;
   position: relative;
   z-index: 20;
 }
