@@ -415,50 +415,6 @@ img {
   z-index: 2;
 }
 
-/* --- Progressive blur: tepi bawah hero (update) --- */
-.hero-blur {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 42%;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.hero-blur span {
-  position: absolute;
-  inset: 0;
-  display: block;
-}
-
-.hero-blur span:nth-child(1) {
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 40%, #000 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 40%, #000 100%);
-}
-
-.hero-blur span:nth-child(2) {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 25%, #000 70%, #000 100%);
-  mask-image: linear-gradient(to bottom, transparent 25%, #000 70%, #000 100%);
-}
-
-.hero-blur span:nth-child(3) {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 55%, #000 100%);
-  mask-image: linear-gradient(to bottom, transparent 55%, #000 100%);
-}
-
-@media (max-width: 768px) {
-  .hero-blur {
-    height: 34%;
-  }
-}
-
 .hero-content {
   position: relative;
   z-index: 10;
